@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tài Khoản Cá Nhân - GoTravel</title>
+  <meta name="description" content="Quản lý thông tin tài khoản, tra cứu đơn hàng và các tour du lịch yêu thích tại GoTravel.">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div id="site-header-container"></div>
+
+  <!-- Page Banner -->
+  <section class="page-banner" style="background-image: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1920&q=80'); padding: 40px 0;">
+    <div class="container">
+      <div class="d-flex align-items-center gap-3">
+        <div class="avatar shadow" style="width:60px; height:60px; font-size:1.5rem;" id="user-big-avatar">U</div>
+        <div>
+          <h1 class="h3 fw-bold text-white mb-0" id="user-display-name">Khách hàng GoTravel</h1>
+          <p class="small text-white-50 mb-0" id="user-display-email">user@gotravel.vn</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main class="section pt-4">
+    <div class="container">
+      <div class="row g-4">
+        <!-- Sidebar Menu (Left) -->
+        <div class="col-12 col-lg-3">
+          <div class="card-gt p-3 shadow-sm">
+            <div class="list-group profile-nav" id="profile-tabs">
+              <button class="list-group-item active" onclick="switchProfileTab('orders', this)">
+                <i class="bi bi-receipt-cutoff text-primary"></i> Đơn hàng của tôi
+              </button>
+              <button class="list-group-item" onclick="switchProfileTab('info', this)">
+                <i class="bi bi-person-gear text-primary"></i> Thông tin cá nhân
+              </button>
+              <button class="list-group-item" onclick="switchProfileTab('favs', this)">
+                <i class="bi bi-heart-fill text-danger"></i> Tour yêu thích
+              </button>
+              <hr class="my-2">
+              <button class="list-group-item text-danger" onclick="GTApp.logout()">
+                <i class="bi bi-box-arrow-right"></i> Đăng xuất
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab Contents (Right) -->
+        <div class="col-12 col-lg-9">
+          <!-- TAB 1: ĐƠN HÀNG CỦA TÔI -->
+          <div id="tab-orders" class="card-gt shadow-sm">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4 pb-2 border-bottom">
+              <div>
+                <h4 class="fw-bold text-navy m-0"><i class="bi bi-receipt text-primary me-2"></i>Đơn hàng của tôi</h4>
+                <small class="text-muted">Theo dõi trạng thái và chi tiết các chuyến đi bạn đã đặt</small>
+              </div>
+
+              <!-- Status filter pills -->
+              <div class="filter-pills d-flex flex-wrap gap-1" id="order-status-filters">
+                <button class="btn btn-sm active" onclick="filterMyOrders('all', this)">Tất cả</button>
+                <button class="btn btn-sm" onclick="filterMyOrders('pending', this)">Chờ thanh toán</button>
+                <button class="btn btn-sm" onclick="filterMyOrders('paid', this)">Đã thanh toán</button>
+                <button class="btn btn-sm" onclick="filterMyOrders('confirmed', this)">Đã xác nhận</button>
+                <button class="btn btn-sm" onclick="filterMyOrders('completed', this)">Đã hoàn thành</button>
+                <button class="btn btn-sm" onclick="filterMyOrders('cancelled', this)">Đã hủy</button>
+              </div>
+            </div>
+
+            <!-- Orders Table -->
+            <div class="table-responsive">
+              <table class="table table-gt">
+                <thead>
+                  <tr>
+                    <th>Mã đơn</th>
+                    <th>Tour du lịch</th>
+                    <th>Ngày đặt</th>
+                    <th>Ngày đi</th>
+                    <th>Tổng tiền</th>
+                    <th>Trạng thái</th>
+                    <th class="text-end">Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody id="my-orders-tbody">
+                  <!-- Rendered by JS -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Empty Orders state -->
+            <div id="no-orders-msg" class="empty-state d-none">
+              <i class="bi bi-calendar-x"></i>
+              <h5 class="fw-bold text-navy">Chưa có đơn hàng nào</h5>
+              <p class="text-muted">Bạn chưa có đơn đặt tour nào theo tiêu chí này. Khám phá các điểm đến hấp dẫn ngay!</p>
+              <a href="tours.html" class="btn btn-orange px-4 py-2 mt-2">Xem danh sách tour</a>
+            </div>
+          </div>
+
+          <!-- TAB 2: THÔNG TIN CÁ NHÂN -->
+          <div id="tab-info" class="card-gt shadow-sm d-none">
+            <h4 class="fw-bold text-navy mb-3 pb-2 border-bottom"><i class="bi bi-person-gear text-primary me-2"></i>Thông tin cá nhân</h4>
+            
+            <form id="profile-info-form" onsubmit="handleProfileUpdate(event)">
+              <div class="row g-3 mb-4">
+                <div class="col-12 col-md-6">
+                  <label class="form-label">Họ và tên</label>
+                  <input type="text" class="form-control" id="p-name" required>
+                </div>
+                <div class="col-12 col-md-6">
+                  <label class="form-label">Email tài khoản</label>
+                  <input type="email" class="form-control" id="p-email" readonly disabled style="background:#f1f5f9;">
+                </div>
+                <div class="col-12 col-md-6">
+                  <label class="form-label">Số điện thoại</label>
+                  <input type="tel" class="form-control" id="p-phone" placeholder="0901234567">
+                </div>
+                <div class="col-12 col-md-6">
+                  <label class="form-label">Vai trò tài khoản</label>
+                  <input type="text" class="form-control" id="p-role" readonly disabled style="background:#f1f5f9;">
+                </div>
+              </div>
+
+              <h5 class="fw-bold text-navy mb-3 pt-3 border-top"><i class="bi bi-shield-lock text-primary me-2"></i>Đổi mật khẩu</h5>
+              <div class="row g-3 mb-4">
+                <div class="col-12 col-md-6">
+                  <label class="form-label">Mật khẩu mới</label>
+                  <input type="password" class="form-control" id="p-new-pass" placeholder="Bỏ trống nếu không đổi">
+                </div>
+                <div class="col-12 col-md-6">
+                  <label class="form-label">Xác nhận mật khẩu mới</label>
+                  <input type="password" class="form-control" id="p-confirm-pass" placeholder="Nhập lại mật khẩu mới">
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-gt px-4 py-2">
+                <i class="bi bi-floppy me-1"></i>Lưu thông tin cá nhân
+              </button>
+            </form>
+          </div>
+
+          <!-- TAB 3: TOUR YÊU THÍCH -->
+          <div id="tab-favs" class="card-gt shadow-sm d-none">
+            <h4 class="fw-bold text-navy mb-3 pb-2 border-bottom"><i class="bi bi-heart-fill text-danger me-2"></i>Tour du lịch yêu thích</h4>
+            <div class="row g-4" id="fav-tours-row">
+              <!-- Rendered by JS -->
+            </div>
+            <div id="no-favs-msg" class="empty-state d-none">
+              <i class="bi bi-heart"></i>
+              <h5 class="fw-bold text-navy">Danh sách yêu thích trống</h5>
+              <p class="text-muted">Nhấn vào biểu tượng trái tim ở các thẻ tour để lưu lại những hành trình bạn yêu thích!</p>
+              <a href="tours.html" class="btn btn-outline-gt px-4 py-2">Khám phá tour ngay</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Modal Chi Tiết Đơn Hàng -->
+  <div class="modal fade" id="orderDetailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content border-0 shadow-lg" style="border-radius:20px;">
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title fw-bold text-navy"><i class="bi bi-receipt-cutoff text-primary me-2"></i>Chi tiết đơn hàng <span id="m-order-code" class="text-primary font-monospace"></span></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body py-4" id="modal-order-content">
+          <!-- Injected dynamically -->
+        </div>
+        <div class="modal-footer border-0 pt-0">
+          <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Đóng</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="site-footer-container"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    let currentFilterStatus = 'all';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('site-header-container').innerHTML = GTApp.getHeaderHTML();
+      document.getElementById('site-footer-container').innerHTML = GTApp.getFooterHTML();
+      GTApp.updateHeaderUser();
+      GTApp.updateCartBadge();
+      GTApp.setupSearchOverlay();
+
+      const user = GTStore.getCurrentUser();
+      if (!user) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      initUserData();
+
+      // Check URL tab parameter
+      const urlParams = new URLSearchParams(window.location.search);
+      const tabParam = urlParams.get('tab');
+      if (user.role !== 'admin') {
+        if (tabParam === 'orders') {
+          const btn = document.querySelector('#profile-tabs button:nth-child(1)');
+          if (btn) switchProfileTab('orders', btn);
+        } else if (tabParam === 'info') {
+          const btn = document.querySelector('#profile-tabs button:nth-child(2)');
+          if (btn) switchProfileTab('info', btn);
+        } else if (tabParam === 'favs') {
+          const btn = document.querySelector('#profile-tabs button:nth-child(3)');
+          if (btn) switchProfileTab('favs', btn);
+        }
+      }
+    });
+
+    function initUserData() {
+      const user = GTStore.getCurrentUser();
+      if (!user) return;
+
+      document.getElementById('user-display-name').textContent = user.name;
+      document.getElementById('user-display-email').textContent = user.email;
+      document.getElementById('user-big-avatar').textContent = (user.name || 'U').charAt(0).toUpperCase();
+
+      document.getElementById('p-name').value = user.name || '';
+      document.getElementById('p-email').value = user.email || '';
+      document.getElementById('p-phone').value = user.phone || '';
+      document.getElementById('p-role').value = user.role === 'admin' ? 'Quản trị viên (Admin)' : 'Khách hàng thân thiết';
+
+      const sidebarMenu = document.getElementById('profile-tabs');
+      if (user.role === 'admin') {
+        sidebarMenu.innerHTML = `
+          <a href="admin.html" class="list-group-item text-primary fw-semibold">
+            <i class="bi bi-shield-lock-fill text-primary"></i> Trang quản trị (Admin)
+          </a>
+          <button class="list-group-item active" onclick="switchProfileTab('info', this)">
+            <i class="bi bi-person-gear text-primary"></i> Thông tin cá nhân
+          </button>
+          <hr class="my-2">
+          <button class="list-group-item text-danger" onclick="GTApp.logout()">
+            <i class="bi bi-box-arrow-right"></i> Đăng xuất
+          </button>
+        `;
+        switchProfileTab('info', sidebarMenu.querySelector('button.list-group-item'));
+      } else {
+        sidebarMenu.innerHTML = `
+          <button class="list-group-item active" onclick="switchProfileTab('orders', this)">
+            <i class="bi bi-receipt-cutoff text-primary"></i> Đơn hàng của tôi
+          </button>
+          <button class="list-group-item" onclick="switchProfileTab('info', this)">
+            <i class="bi bi-person-gear text-primary"></i> Thông tin cá nhân
+          </button>
+          <button class="list-group-item" onclick="switchProfileTab('favs', this)">
+            <i class="bi bi-heart-fill text-danger"></i> Tour yêu thích
+          </button>
+          <hr class="my-2">
+          <button class="list-group-item text-danger" onclick="GTApp.logout()">
+            <i class="bi bi-box-arrow-right"></i> Đăng xuất
+          </button>
+        `;
+        renderMyOrders();
+        renderFavoriteTours();
+      }
+    }
+
+    function switchProfileTab(tabName, btn) {
+      document.querySelectorAll('#profile-tabs .list-group-item').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      document.getElementById('tab-orders').classList.toggle('d-none', tabName !== 'orders');
+      document.getElementById('tab-info').classList.toggle('d-none', tabName !== 'info');
+      document.getElementById('tab-favs').classList.toggle('d-none', tabName !== 'favs');
+
+      if (tabName === 'favs') renderFavoriteTours();
+    }
+
+    function filterMyOrders(status, btn) {
+      currentFilterStatus = status;
+      document.querySelectorAll('#order-status-filters .btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderMyOrders();
+    }
+
+    function renderMyOrders() {
+      const user = GTStore.getCurrentUser();
+      const allOrders = GTStore.getOrders();
+      // Filter for current user's email or show all demo orders
+      const userOrders = allOrders.filter(o => !user || o.userEmail === user.email || o.customer?.email === user.email);
+
+      const filtered = userOrders.filter(o => {
+        if (currentFilterStatus === 'all') return true;
+        return o.status === currentFilterStatus;
+      });
+
+      const tbody = document.getElementById('my-orders-tbody');
+      const emptyMsg = document.getElementById('no-orders-msg');
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '';
+        emptyMsg.classList.remove('d-none');
+        return;
+      }
+
+      emptyMsg.classList.add('d-none');
+
+      const statusLabels = {
+        pending: { text: 'Chờ thanh toán', class: 'st-pending' },
+        paid: { text: 'Đã thanh toán', class: 'st-paid' },
+        confirmed: { text: 'Đã xác nhận', class: 'st-confirmed' },
+        completed: { text: 'Đã hoàn thành', class: 'st-completed' },
+        cancelled: { text: 'Đã hủy', class: 'st-cancelled' }
+      };
+
+      tbody.innerHTML = filtered.map(o => {
+        const st = statusLabels[o.status] || { text: o.status, class: 'st-pending' };
+        return `
+          <tr>
+            <td><strong class="font-monospace text-primary">${o.code}</strong></td>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <img src="${o.image || FALLBACK_IMG}" alt="Tour" style="width:42px;height:34px;object-fit:cover;border-radius:6px;">
+                <span class="fw-semibold text-navy text-truncate" style="max-width:200px;">${o.tourName}</span>
+              </div>
+            </td>
+            <td>${GTApp.formatDateVN(o.createdAt)}</td>
+            <td><strong>${GTApp.formatDateVN(o.date)}</strong></td>
+            <td><strong class="text-orange">${GTApp.formatVND(o.total)}</strong></td>
+            <td><span class="status ${st.class}">${st.text}</span></td>
+            <td class="text-end">
+              ${o.status === 'pending' ? `<a href="payment.html?code=${o.code}" class="btn btn-sm btn-orange me-1">Thanh toán</a>` : ''}
+              <button class="btn btn-sm btn-outline-gt" onclick="openOrderDetailModal('${o.code}')">Chi tiết</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function openOrderDetailModal(code) {
+      const order = GTStore.getOrderByCode(code);
+      if (!order) return;
+
+      document.getElementById('m-order-code').textContent = order.code;
+
+      const content = document.getElementById('modal-order-content');
+      content.innerHTML = `
+        <div class="row g-3">
+          <div class="col-12 col-md-6">
+            <h6 class="fw-bold text-navy border-bottom pb-1">Chuyến đi</h6>
+            <div class="small mb-1"><strong>Tour:</strong> ${order.tourName}</div>
+            <div class="small mb-1"><strong>Khởi hành:</strong> ${GTApp.formatDateVN(order.date)}</div>
+            <div class="small mb-1"><strong>Số lượng khách:</strong> ${order.adults} lớn, ${order.children || 0} trẻ</div>
+            <div class="small"><strong>Tổng thanh toán:</strong> <span class="fw-bold text-orange fs-6">${GTApp.formatVND(order.total)}</span></div>
+          </div>
+          <div class="col-12 col-md-6">
+            <h6 class="fw-bold text-navy border-bottom pb-1">Khách hàng</h6>
+            <div class="small mb-1"><strong>Họ tên:</strong> ${order.customer?.name || '--'}</div>
+            <div class="small mb-1"><strong>Số điện thoại:</strong> ${order.customer?.phone || '--'}</div>
+            <div class="small mb-1"><strong>Email:</strong> ${order.customer?.email || '--'}</div>
+            <div class="small"><strong>Ghi chú:</strong> <span class="fst-italic text-muted">${order.note || 'Không có'}</span></div>
+          </div>
+        </div>
+      `;
+
+      new bootstrap.Modal(document.getElementById('orderDetailModal')).show();
+    }
+
+    function renderFavoriteTours() {
+      const favIds = GTStore.getFavorites();
+      const allTours = GTStore.getTours();
+      const favTours = allTours.filter(t => favIds.includes(t.id));
+      const container = document.getElementById('fav-tours-row');
+      const empty = document.getElementById('no-favs-msg');
+
+      if (favTours.length === 0) {
+        container.innerHTML = '';
+        empty.classList.remove('d-none');
+        return;
+      }
+      empty.classList.add('d-none');
+      container.innerHTML = favTours.map(t => GTApp.createTourCardHTML(t)).join('');
+    }
+
+    function handleProfileUpdate(e) {
+      e.preventDefault();
+      const user = GTStore.getCurrentUser();
+      if (!user) return;
+
+      const newName = document.getElementById('p-name').value.trim();
+      const newPhone = document.getElementById('p-phone').value.trim();
+      const newPass = document.getElementById('p-new-pass').value;
+      const confirmPass = document.getElementById('p-confirm-pass').value;
+
+      if (newPass) {
+        if (newPass !== confirmPass) {
+          GTApp.toast('Mật khẩu mới không trùng khớp!', 'warning');
+          return;
+        }
+        user.password = newPass;
+      }
+
+      user.name = newName;
+      user.phone = newPhone;
+
+      GTStore.setCurrentUser(user);
+
+      // Also update in users list
+      const users = GTStore.getUsers();
+      const idx = users.findIndex(u => u.id === user.id);
+      if (idx !== -1) {
+        users[idx] = user;
+        localStorage.setItem(GTStore.KEYS.USERS, JSON.stringify(users));
+      }
+
+      initUserData();
+      GTApp.toast('Cập nhật thông tin thành công!', 'success');
+    }
+  </script>
+</body>
+</html>

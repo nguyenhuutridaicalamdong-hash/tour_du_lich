@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng Nhập - GoTravel</title>
+  <meta name="description" content="Đăng nhập tài khoản GoTravel để quản lý đơn đặt tour và nhận ưu đãi độc quyền.">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-soft">
+
+  <div id="site-header-container"></div>
+
+  <div class="auth-wrap">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-12 col-lg-10">
+          <div class="auth-card row g-0">
+            <!-- Left Side Travel Image -->
+            <div class="col-12 col-md-5 auth-side d-none d-md-flex" style="background-image: url('https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=1000&q=80');">
+              <div>
+                <span class="badge bg-orange mb-2 px-3 py-1">CHÀO MỪNG TRỞ LẠI</span>
+                <h3 class="fw-bold mb-2">Khám phá thế giới cùng GoTravel</h3>
+                <p class="small text-white-50 mb-0">Hơn 50.000 du khách đã tin tưởng và đồng hành trong các hành trình du lịch đáng nhớ.</p>
+              </div>
+            </div>
+
+            <!-- Right Side Login Form -->
+            <div class="col-12 col-md-7 auth-form">
+              <div class="mb-4">
+                <a class="brand mb-3 d-inline-flex" href="index.html">
+                  <div class="brand-icon" style="width:36px;height:36px;font-size:1.1rem;"><i class="bi bi-send-fill"></i></div>
+                  <div class="brand-name" style="font-size:1.2rem;">Go<span>Travel</span></div>
+                </a>
+                <h2 class="fw-bold text-navy h3">Đăng nhập tài khoản</h2>
+                <p class="text-muted small">Nhập email và mật khẩu của bạn để tiếp tục</p>
+              </div>
+
+              <!-- Demo accounts box -->
+              <div class="demo-box mb-4">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                  <span class="fw-bold text-navy small"><i class="bi bi-key-fill text-primary me-1"></i>Tài khoản Demo trải nghiệm nhanh:</span>
+                </div>
+                <div class="d-flex flex-wrap gap-2">
+                  <button type="button" class="btn btn-sm btn-outline-gt bg-white" onclick="fillDemo('user@gotravel.vn', '123456')">
+                    <i class="bi bi-person me-1"></i>Khách hàng (User)
+                  </button>
+                  <button type="button" class="btn btn-sm btn-outline-warning text-dark bg-white" onclick="fillDemo('admin@gotravel.vn', 'admin123')">
+                    <i class="bi bi-shield-lock me-1"></i>Quản trị viên (Admin)
+                  </button>
+                </div>
+              </div>
+
+              <form id="login-form" onsubmit="handleLoginSubmit(event)">
+                <div class="mb-3">
+                  <label class="form-label">Địa chỉ Email</label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-white"><i class="bi bi-envelope text-muted"></i></span>
+                    <input type="email" id="login-email" class="form-control" placeholder="nhapemail@gotravel.vn" required>
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <div class="d-flex justify-content-between">
+                    <label class="form-label">Mật khẩu</label>
+                    <a href="javascript:void(0)" class="small text-primary" onclick="alert('Demo: Vui lòng sử dụng mật khẩu mặc định 123456 hoặc liên hệ hotline 1900 6868 để đặt lại mật khẩu.')">Quên mật khẩu?</a>
+                  </div>
+                  <div class="input-group">
+                    <span class="input-group-text bg-white"><i class="bi bi-lock text-muted"></i></span>
+                    <input type="password" id="login-password" class="form-control" placeholder="••••••••" required>
+                    <button class="btn btn-outline-secondary" type="button" onclick="togglePassVisibility('login-password', this)">
+                      <i class="bi bi-eye"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="form-check mb-4">
+                  <input class="form-check-input" type="checkbox" id="remember-me" checked>
+                  <label class="form-check-label small" for="remember-me">
+                    Ghi nhớ đăng nhập trên thiết bị này
+                  </label>
+                </div>
+
+                <button type="submit" class="btn btn-gt btn-lg w-100 py-3 fw-bold shadow-sm mb-3">
+                  <i class="bi bi-box-arrow-in-right me-2"></i>Đăng nhập
+                </button>
+
+                <div class="text-center small text-muted">
+                  Chưa có tài khoản? <a href="register.html" class="fw-bold text-primary">Đăng ký tài khoản mới</a>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="site-footer-container"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('site-header-container').innerHTML = GTApp.getHeaderHTML();
+      document.getElementById('site-footer-container').innerHTML = GTApp.getFooterHTML();
+      GTApp.updateHeaderUser();
+      GTApp.updateCartBadge();
+      GTApp.setupSearchOverlay();
+
+      // If already logged in, offer quick greeting
+      const u = GTStore.getCurrentUser();
+      if (u) {
+        document.getElementById('login-email').value = u.email || '';
+      }
+    });
+
+    function fillDemo(email, pass) {
+      document.getElementById('login-email').value = email;
+      document.getElementById('login-password').value = pass;
+      GTApp.toast(`Đã điền thông tin demo: ${email}`, 'info');
+    }
+
+    function togglePassVisibility(id, btn) {
+      const inp = document.getElementById(id);
+      const isPass = inp.type === 'password';
+      inp.type = isPass ? 'text' : 'password';
+      btn.innerHTML = isPass ? '<i class="bi bi-eye-slash"></i>' : '<i class="bi bi-eye"></i>';
+    }
+
+    function handleLoginSubmit(e) {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value.trim();
+      const pass = document.getElementById('login-password').value;
+
+      const res = GTStore.login(email, pass);
+      if (!res.success) {
+        GTApp.toast(res.message, 'error');
+        return;
+      }
+
+      GTApp.toast(`Đăng nhập thành công! Xin chào ${res.user.name}`, 'success');
+
+      setTimeout(() => {
+        if (res.user.role === 'admin') {
+          window.location.href = 'admin.html';
+        } else {
+          window.location.href = 'profile.html';
+        }
+      }, 700);
+    }
+  </script>
+</body>
+</html>

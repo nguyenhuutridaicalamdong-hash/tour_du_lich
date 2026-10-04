@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Danh Sách Tour Du Lịch - GoTravel</title>
+  <meta name="description" content="Danh sách các tour du lịch hấp dẫn, khởi hành hàng tuần tại GoTravel. Lọc theo điểm đến, mức giá, thời lượng dễ dàng.">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div id="site-header-container"></div>
+
+  <!-- Page Banner -->
+  <section class="page-banner" style="background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80');">
+    <div class="container">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-2">
+          <li class="breadcrumb-item"><a href="index.html">Trang chủ</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Tour du lịch</li>
+        </ol>
+      </nav>
+      <h1 class="display-5 fw-bold mb-2">Khám phá các tour du lịch</h1>
+      <p class="lead mb-0 text-white-50">Lựa chọn chuyến đi mơ ước với những ưu đãi tốt nhất trong năm</p>
+    </div>
+  </section>
+
+  <!-- Main Tour Content -->
+  <section class="section">
+    <div class="container">
+      <div class="row g-4">
+        <!-- Sidebar Filter (Left) -->
+        <div class="col-12 col-lg-3">
+          <div class="card-gt filter-card">
+            <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+              <h5 class="m-0 fw-bold text-navy"><i class="bi bi-funnel text-primary me-2"></i>Bộ lọc tìm kiếm</h5>
+              <button class="btn btn-sm btn-link text-danger text-decoration-none p-0" onclick="resetFilters()">Xóa lọc</button>
+            </div>
+
+            <!-- Từ khóa tìm kiếm nhanh -->
+            <div class="filter-group">
+              <h6>Tìm theo từ khóa</h6>
+              <div class="input-group">
+                <input type="text" id="filter-keyword" class="form-control form-control-sm" placeholder="Nhập tên tour, địa danh..." oninput="applyFilters()">
+                <button class="btn btn-sm btn-outline-secondary" type="button" onclick="document.getElementById('filter-keyword').value=''; applyFilters();"><i class="bi bi-x"></i></button>
+              </div>
+            </div>
+
+            <!-- Điểm đến -->
+            <div class="filter-group">
+              <h6>Điểm đến</h6>
+              <div class="form-check">
+                <input class="form-check-input filter-dest" type="checkbox" value="Hạ Long" id="dest-halong" onchange="applyFilters()">
+                <label class="form-check-label" for="dest-halong">Hạ Long (Quảng Ninh)</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input filter-dest" type="checkbox" value="Đà Nẵng" id="dest-danang" onchange="applyFilters()">
+                <label class="form-check-label" for="dest-danang">Đà Nẵng – Hội An</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input filter-dest" type="checkbox" value="Đà Lạt" id="dest-dalat" onchange="applyFilters()">
+                <label class="form-check-label" for="dest-dalat">Đà Lạt</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input filter-dest" type="checkbox" value="Phú Quốc" id="dest-phuquoc" onchange="applyFilters()">
+                <label class="form-check-label" for="dest-phuquoc">Phú Quốc</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input filter-dest" type="checkbox" value="Sa Pa" id="dest-sapa" onchange="applyFilters()">
+                <label class="form-check-label" for="dest-sapa">Sa Pa</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input filter-dest" type="checkbox" value="Nha Trang" id="dest-nhatrang" onchange="applyFilters()">
+                <label class="form-check-label" for="dest-nhatrang">Nha Trang</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input filter-dest" type="checkbox" value="Hà Giang" id="dest-hagiang" onchange="applyFilters()">
+                <label class="form-check-label" for="dest-hagiang">Hà Giang</label>
+              </div>
+            </div>
+
+            <!-- Khoảng giá -->
+            <div class="filter-group">
+              <h6>Khoảng giá</h6>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="priceRange" value="all" id="price-all" checked onchange="applyFilters()">
+                <label class="form-check-label" for="price-all">Tất cả mức giá</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="priceRange" value="under-3m" id="price-1" onchange="applyFilters()">
+                <label class="form-check-label" for="price-1">Dưới 3.000.000đ</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="priceRange" value="3m-5m" id="price-2" onchange="applyFilters()">
+                <label class="form-check-label" for="price-2">3.000.000đ – 5.000.000đ</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="priceRange" value="5m-7m" id="price-3" onchange="applyFilters()">
+                <label class="form-check-label" for="price-3">5.000.000đ – 7.000.000đ</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="priceRange" value="above-7m" id="price-4" onchange="applyFilters()">
+                <label class="form-check-label" for="price-4">Trên 7.000.000đ</label>
+              </div>
+            </div>
+
+            <!-- Thời lượng -->
+            <div class="filter-group">
+              <h6>Thời lượng</h6>
+              <div class="form-check">
+                <input class="form-check-input filter-dur" type="checkbox" value="2" id="dur-2" onchange="applyFilters()">
+                <label class="form-check-label" for="dur-2">2 ngày 1 đêm</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input filter-dur" type="checkbox" value="3" id="dur-3" onchange="applyFilters()">
+                <label class="form-check-label" for="dur-3">3 ngày 2 đêm</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input filter-dur" type="checkbox" value="4" id="dur-4" onchange="applyFilters()">
+                <label class="form-check-label" for="dur-4">4 ngày 3 đêm trở lên</label>
+              </div>
+            </div>
+
+            <!-- Loại tour -->
+            <div class="filter-group">
+              <h6>Loại hình tour</h6>
+              <div class="form-check">
+                <input class="form-check-input filter-type" type="checkbox" value="Biển đảo" id="type-sea" onchange="applyFilters()">
+                <label class="form-check-label" for="type-sea">Biển đảo</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input filter-type" type="checkbox" value="Khám phá" id="type-disc" onchange="applyFilters()">
+                <label class="form-check-label" for="type-disc">Khám phá / Trải nghiệm</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input filter-type" type="checkbox" value="Nghỉ dưỡng" id="type-resort" onchange="applyFilters()">
+                <label class="form-check-label" for="type-resort">Nghỉ dưỡng</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input filter-type" type="checkbox" value="Núi rừng" id="type-mountain" onchange="applyFilters()">
+                <label class="form-check-label" for="type-mountain">Núi rừng</label>
+              </div>
+            </div>
+
+            <!-- Đánh giá -->
+            <div class="filter-group">
+              <h6>Đánh giá tối thiểu</h6>
+              <select id="filter-rating" class="form-select form-select-sm" onchange="applyFilters()">
+                <option value="0">Tất cả đánh giá</option>
+                <option value="4.8">4.8★ trở lên (Rất tốt)</option>
+                <option value="4.6">4.6★ trở lên</option>
+                <option value="4.0">4.0★ trở lên</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tour Grid (Right) -->
+        <div class="col-12 col-lg-9">
+          <!-- Top bar with count & sorting -->
+          <div class="card-gt p-3 mb-4 d-flex flex-wrap justify-content-between align-items-center gap-3">
+            <div>
+              <span id="results-count" class="fw-bold text-navy fs-6">Đang tải danh sách tour...</span>
+              <div id="active-filter-chips" class="d-flex flex-wrap gap-2 mt-2"></div>
+            </div>
+
+            <div class="d-flex align-items-center gap-2 ms-auto">
+              <label for="sort-select" class="small text-muted fw-semibold mb-0 text-nowrap">Sắp xếp theo:</label>
+              <select id="sort-select" class="form-select form-select-sm" style="width:190px;" onchange="applyFilters()">
+                <option value="popular">Phổ biến nhất</option>
+                <option value="price-asc">Giá thấp → cao</option>
+                <option value="price-desc">Giá cao → thấp</option>
+                <option value="newest">Mới nhất</option>
+                <option value="rating">Đánh giá cao nhất</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Tours Grid -->
+          <div class="row g-4" id="tours-grid">
+            <!-- Rendered by JS -->
+          </div>
+
+          <!-- Empty State -->
+          <div id="empty-state" class="empty-state d-none">
+            <i class="bi bi-search"></i>
+            <h5 class="fw-bold text-navy">Không tìm thấy tour phù hợp</h5>
+            <p class="text-muted">Vui lòng điều chỉnh lại tiêu chí lọc hoặc thử tìm với từ khóa khác.</p>
+            <button class="btn btn-outline-gt mt-2" onclick="resetFilters()">Xem tất cả các tour</button>
+          </div>
+
+          <!-- Pagination / Load more -->
+          <div id="load-more-zone" class="text-center mt-5">
+            <button id="btn-load-more" class="btn btn-outline-gt px-4 py-2" onclick="loadMore()">
+              <i class="bi bi-arrow-clockwise me-2"></i>Xem thêm tour
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="site-footer-container"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    let visibleCount = 8;
+    let filteredTours = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('site-header-container').innerHTML = GTApp.getHeaderHTML('tours');
+      document.getElementById('site-footer-container').innerHTML = GTApp.getFooterHTML();
+      GTApp.updateHeaderUser();
+      GTApp.updateCartBadge();
+      GTApp.setupSearchOverlay();
+
+      // Read query params from URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const destParam = urlParams.get('dest');
+      const qParam = urlParams.get('q');
+      const typeParam = urlParams.get('type');
+
+      if (qParam) {
+        document.getElementById('filter-keyword').value = qParam;
+      }
+      if (destParam) {
+        document.querySelectorAll('.filter-dest').forEach(chk => {
+          if (chk.value.toLowerCase().includes(destParam.toLowerCase()) || destParam.toLowerCase().includes(chk.value.toLowerCase())) {
+            chk.checked = true;
+          }
+        });
+      }
+      if (typeParam) {
+        document.querySelectorAll('.filter-type').forEach(chk => {
+          if (chk.value.toLowerCase() === typeParam.toLowerCase()) {
+            chk.checked = true;
+          }
+        });
+      }
+
+      applyFilters();
+    });
+
+    function applyFilters() {
+      const allTours = GTStore.getTours();
+      const keyword = (document.getElementById('filter-keyword').value || '').trim().toLowerCase();
+      
+      const checkedDests = Array.from(document.querySelectorAll('.filter-dest:checked')).map(c => c.value.toLowerCase());
+      const checkedDurs = Array.from(document.querySelectorAll('.filter-dur:checked')).map(c => Number(c.value));
+      const checkedTypes = Array.from(document.querySelectorAll('.filter-type:checked')).map(c => c.value.toLowerCase());
+      const priceRange = document.querySelector('input[name="priceRange"]:checked')?.value || 'all';
+      const minRating = parseFloat(document.getElementById('filter-rating').value) || 0;
+      const sortBy = document.getElementById('sort-select').value;
+
+      filteredTours = allTours.filter(tour => {
+        // Keyword
+        if (keyword) {
+          const matchName = tour.name.toLowerCase().includes(keyword);
+          const matchDest = tour.destination.toLowerCase().includes(keyword);
+          const matchOverview = (tour.overview || '').toLowerCase().includes(keyword);
+          if (!matchName && !matchDest && !matchOverview) return false;
+        }
+
+        // Destination
+        if (checkedDests.length > 0) {
+          const hasDest = checkedDests.some(d => tour.destination.toLowerCase().includes(d) || tour.name.toLowerCase().includes(d));
+          if (!hasDest) return false;
+        }
+
+        // Price range
+        if (priceRange === 'under-3m' && tour.price >= 3000000) return false;
+        if (priceRange === '3m-5m' && (tour.price < 3000000 || tour.price > 5000000)) return false;
+        if (priceRange === '5m-7m' && (tour.price < 5000000 || tour.price > 7000000)) return false;
+        if (priceRange === 'above-7m' && tour.price <= 7000000) return false;
+
+        // Duration
+        if (checkedDurs.length > 0) {
+          const matchDur = checkedDurs.some(days => {
+            if (days === 4) return tour.days >= 4;
+            return tour.days === days;
+          });
+          if (!matchDur) return false;
+        }
+
+        // Type
+        if (checkedTypes.length > 0) {
+          if (!checkedTypes.includes((tour.type || '').toLowerCase())) return false;
+        }
+
+        // Rating
+        if (minRating > 0 && (tour.rating || 0) < minRating) return false;
+
+        return true;
+      });
+
+      // Sorting
+      if (sortBy === 'price-asc') {
+        filteredTours.sort((a, b) => a.price - b.price);
+      } else if (sortBy === 'price-desc') {
+        filteredTours.sort((a, b) => b.price - a.price);
+      } else if (sortBy === 'newest') {
+        filteredTours.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+      } else if (sortBy === 'rating') {
+        filteredTours.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+      } else {
+        // popular: featured first, then reviews
+        filteredTours.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0) || (b.reviews || 0) - (a.reviews || 0));
+      }
+
+      renderTourList();
+    }
+
+    function renderTourList() {
+      const container = document.getElementById('tours-grid');
+      const emptyState = document.getElementById('empty-state');
+      const countEl = document.getElementById('results-count');
+      const loadMoreBtn = document.getElementById('load-more-zone');
+
+      countEl.innerHTML = `Tìm thấy <span class="text-primary">${filteredTours.length}</span> tour phù hợp`;
+
+      if (filteredTours.length === 0) {
+        container.innerHTML = '';
+        emptyState.classList.remove('d-none');
+        loadMoreBtn.classList.add('d-none');
+        return;
+      }
+
+      emptyState.classList.add('d-none');
+      const toursToShow = filteredTours.slice(0, visibleCount);
+      
+      // On listing page, render cards inside 3-column col-12 col-md-6 col-lg-4
+      container.innerHTML = toursToShow.map(tour => {
+        const isFav = GTStore.isFavorite(tour.id);
+        let badgeClass = 'b-new';
+        if (tour.badge === 'Bán chạy') badgeClass = 'b-hot';
+        else if (tour.badge === 'Khuyến mãi') badgeClass = 'b-sale';
+        else if (tour.badge === 'Yêu thích') badgeClass = 'b-love';
+
+        const discountPercent = tour.oldPrice ? Math.round(((tour.oldPrice - tour.price) / tour.oldPrice) * 100) : 0;
+        const coverImg = (tour.images && tour.images[0]) || FALLBACK_IMG;
+
+        return `
+          <div class="col-12 col-md-6 col-lg-4">
+            <div class="tour-card" onclick="window.location.href='tour-detail.html?id=${tour.id}'">
+              <div class="tour-thumb">
+                <img src="${coverImg}" alt="${tour.name}" loading="lazy" onerror="this.src='${FALLBACK_IMG}'">
+                <span class="tour-badge ${badgeClass}">${tour.badge || 'Nổi bật'}</span>
+                <button class="fav-btn ${isFav ? 'active' : ''}" data-fav-id="${tour.id}" title="Yêu thích" onclick="event.stopPropagation(); GTStore.toggleFavorite(${tour.id})">
+                  <i class="bi ${isFav ? 'bi-heart-fill text-danger' : 'bi-heart'}"></i>
+                </button>
+              </div>
+              <div class="tour-body">
+                <h5 class="tour-title" title="${tour.name}">${tour.name}</h5>
+                <div class="tour-meta">
+                  <span><i class="bi bi-clock"></i>${tour.days} ngày ${tour.nights} đêm</span>
+                  <span><i class="bi bi-geo-alt"></i>${tour.departFrom}</span>
+                </div>
+                <div class="tour-rating mb-2">
+                  <span class="stars"><i class="bi bi-star-fill"></i></span>
+                  <strong class="text-navy ms-1">${tour.rating || 4.8}</strong>
+                  <small class="text-muted">(${tour.reviews || 120} đánh giá)</small>
+                </div>
+                <div class="tour-foot">
+                  <div>
+                    ${tour.oldPrice ? `<div class="price-old">${GTApp.formatVND(tour.oldPrice)}</div>` : ''}
+                    <div class="d-flex align-items-center">
+                      <span class="price-now">${GTApp.formatVND(tour.price)}</span>
+                      ${discountPercent > 0 ? `<span class="discount-tag">-${discountPercent}%</span>` : ''}
+                    </div>
+                  </div>
+                  <span class="arrow-btn" title="Xem chi tiết">
+                    <i class="bi bi-arrow-right"></i>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      if (visibleCount >= filteredTours.length) {
+        loadMoreBtn.classList.add('d-none');
+      } else {
+        loadMoreBtn.classList.remove('d-none');
+      }
+    }
+
+    function loadMore() {
+      visibleCount += 6;
+      renderTourList();
+    }
+
+    function resetFilters() {
+      document.getElementById('filter-keyword').value = '';
+      document.querySelectorAll('.filter-dest').forEach(c => c.checked = false);
+      document.querySelectorAll('.filter-dur').forEach(c => c.checked = false);
+      document.querySelectorAll('.filter-type').forEach(c => c.checked = false);
+      document.getElementById('price-all').checked = true;
+      document.getElementById('filter-rating').value = '0';
+      document.getElementById('sort-select').value = 'popular';
+      visibleCount = 8;
+      applyFilters();
+    }
+  </script>
+</body>
+</html>

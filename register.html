@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng Ký Tài Khoản - GoTravel</title>
+  <meta name="description" content="Đăng ký tài khoản mới tại GoTravel để nhận ngay voucher giảm 10% và trải nghiệm đặt tour trực tuyến thuận tiện.">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-soft">
+
+  <div id="site-header-container"></div>
+
+  <div class="auth-wrap">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-12 col-lg-10">
+          <div class="auth-card row g-0">
+            <!-- Left Side Travel Image -->
+            <div class="col-12 col-md-5 auth-side d-none d-md-flex" style="background-image: url('https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?auto=format&fit=crop&w=1000&q=80');">
+              <div>
+                <span class="badge bg-primary mb-2 px-3 py-1">THÀNH VIÊN MỚI</span>
+                <h3 class="fw-bold mb-2">Tạo tài khoản GoTravel ngay hôm nay</h3>
+                <p class="small text-white-50 mb-0">Tặng ngay mã voucher <strong>GOTRAVEL10</strong> giảm 10% cho chuyến đi đầu tiên của bạn!</p>
+              </div>
+            </div>
+
+            <!-- Right Side Register Form -->
+            <div class="col-12 col-md-7 auth-form">
+              <div class="mb-4">
+                <a class="brand mb-3 d-inline-flex" href="index.html">
+                  <div class="brand-icon" style="width:36px;height:36px;font-size:1.1rem;"><i class="bi bi-send-fill"></i></div>
+                  <div class="brand-name" style="font-size:1.2rem;">Go<span>Travel</span></div>
+                </a>
+                <h2 class="fw-bold text-navy h3">Đăng ký thành viên</h2>
+                <p class="text-muted small">Điền các thông tin bên dưới để tạo tài khoản miễn phí</p>
+              </div>
+
+              <form id="register-form" onsubmit="handleRegisterSubmit(event)">
+                <div class="mb-3">
+                  <label class="form-label">Họ và tên <span class="text-danger">*</span></label>
+                  <input type="text" id="reg-name" class="form-control" placeholder="Nguyễn Văn A" required>
+                </div>
+
+                <div class="row g-2 mb-3">
+                  <div class="col-12 col-md-6">
+                    <label class="form-label">Địa chỉ Email <span class="text-danger">*</span></label>
+                    <input type="email" id="reg-email" class="form-control" placeholder="ban@gmail.com" required>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <label class="form-label">Số điện thoại <span class="text-danger">*</span></label>
+                    <input type="tel" id="reg-phone" class="form-control" placeholder="0901234567" required pattern="[0-9]{9,11}">
+                  </div>
+                </div>
+
+                <div class="row g-2 mb-3">
+                  <div class="col-12 col-md-6">
+                    <label class="form-label">Mật khẩu <span class="text-danger">*</span></label>
+                    <input type="password" id="reg-password" class="form-control" placeholder="Tối thiểu 6 ký tự" required minlength="6">
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <label class="form-label">Xác nhận mật khẩu <span class="text-danger">*</span></label>
+                    <input type="password" id="reg-confirm" class="form-control" placeholder="Nhập lại mật khẩu" required minlength="6">
+                  </div>
+                </div>
+
+                <div class="form-check mb-4">
+                  <input class="form-check-input" type="checkbox" id="reg-terms" checked required>
+                  <label class="form-check-label small" for="reg-terms">
+                    Tôi đồng ý với <a href="javascript:void(0)" class="text-primary" onclick="alert('Điều khoản GoTravel: Bảo mật thông tin, hỗ trợ khách hàng và minh bạch chi phí.')">Điều khoản dịch vụ</a> và <a href="javascript:void(0)" class="text-primary" onclick="alert('Chính sách bảo mật: GoTravel cam kết không chia sẻ dữ liệu với bên thứ ba.')">Chính sách bảo mật</a>
+                  </label>
+                </div>
+
+                <button type="submit" class="btn btn-gt btn-lg w-100 py-3 fw-bold shadow-sm mb-3">
+                  <i class="bi bi-person-plus-fill me-2"></i>Đăng ký tài khoản
+                </button>
+
+                <div class="text-center small text-muted">
+                  Đã có tài khoản? <a href="login.html" class="fw-bold text-primary">Đăng nhập tại đây</a>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="site-footer-container"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('site-header-container').innerHTML = GTApp.getHeaderHTML();
+      document.getElementById('site-footer-container').innerHTML = GTApp.getFooterHTML();
+      GTApp.updateHeaderUser();
+      GTApp.updateCartBadge();
+      GTApp.setupSearchOverlay();
+    });
+
+    function handleRegisterSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('reg-name').value.trim();
+      const email = document.getElementById('reg-email').value.trim();
+      const phone = document.getElementById('reg-phone').value.trim();
+      const pass = document.getElementById('reg-password').value;
+      const conf = document.getElementById('reg-confirm').value;
+
+      if (pass !== conf) {
+        GTApp.toast('Mật khẩu xác nhận không khớp!', 'warning');
+        document.getElementById('reg-confirm').focus();
+        return;
+      }
+
+      const res = GTStore.register({ name, email, phone, password: pass });
+      if (!res.success) {
+        GTApp.toast(res.message, 'error');
+        return;
+      }
+
+      GTApp.toast('Đăng ký tài khoản thành công! Tự động đăng nhập...', 'success');
+      setTimeout(() => {
+        window.location.href = 'profile.html';
+      }, 700);
+    }
+  </script>
+</body>
+</html>

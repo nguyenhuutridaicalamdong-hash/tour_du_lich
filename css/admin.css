@@ -1,0 +1,197 @@
+/* =========================================================
+   GoTravel - Admin Stylesheet
+   ========================================================= */
+
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #f4f7fb;
+}
+
+.admin-sidebar {
+  width: 260px;
+  background: #12345B;
+  color: #fff;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  z-index: 100;
+  box-shadow: 4px 0 20px rgba(18,52,91,.15);
+}
+
+.admin-brand {
+  padding: 1.5rem;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+}
+
+.admin-nav {
+  padding: 1rem .75rem;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.admin-nav-item {
+  display: flex;
+  align-items: center;
+  gap: .85rem;
+  padding: .8rem 1rem;
+  border-radius: 12px;
+  color: rgba(255,255,255,.75);
+  font-weight: 500;
+  font-size: .94rem;
+  transition: all .2s ease;
+  margin-bottom: 4px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.admin-nav-item:hover {
+  color: #fff;
+  background: rgba(255,255,255,.08);
+}
+
+.admin-nav-item.active {
+  color: #fff;
+  background: #1688E8;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(22,136,232,.35);
+}
+
+.admin-nav-item i {
+  font-size: 1.2rem;
+}
+
+.admin-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.admin-topbar {
+  height: 70px;
+  background: #fff;
+  border-bottom: 1px solid #e6edf5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 99;
+}
+
+.admin-content {
+  padding: 2rem;
+  flex: 1;
+}
+
+.stat-card {
+  background: #fff;
+  border-radius: 18px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 16px rgba(18,52,91,.04);
+  border: 1px solid #e6edf5;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  transition: transform .2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+}
+
+.stat-icon {
+  width: 58px;
+  height: 58px;
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  font-size: 1.6rem;
+  flex-shrink: 0;
+}
+
+.stat-card h3 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 1.65rem;
+  margin: 0;
+  color: #12345B;
+}
+
+.stat-card small {
+  color: #6b7a8c;
+  font-weight: 500;
+}
+
+.admin-chart-bar {
+  display: flex;
+  align-items: flex-end;
+  gap: 1.2rem;
+  height: 220px;
+  padding: 1rem 0;
+}
+
+.bar-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.bar-fill {
+  width: 100%;
+  max-width: 44px;
+  background: linear-gradient(180deg, #1688E8, #4fb0ff);
+  border-radius: 8px 8px 0 0;
+  transition: height .6s ease;
+  position: relative;
+}
+
+.bar-fill:hover {
+  background: linear-gradient(180deg, #FF8A3D, #ffaa6b);
+}
+
+.bar-label {
+  font-size: .8rem;
+  color: #6b7a8c;
+  margin-top: .6rem;
+  font-weight: 600;
+}
+
+.bar-val {
+  position: absolute;
+  top: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: .72rem;
+  font-weight: 700;
+  color: #12345B;
+  white-space: nowrap;
+}
+
+@media (max-width: 991.98px) {
+  .admin-sidebar {
+    position: fixed;
+    left: -260px;
+    transition: left .3s ease;
+  }
+  .admin-sidebar.show {
+    left: 0;
+  }
+  .admin-topbar {
+    padding: 0 1rem;
+  }
+  .admin-content {
+    padding: 1.25rem;
+  }
+}

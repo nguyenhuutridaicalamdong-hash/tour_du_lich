@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Portal - GoTravel Quản Trị Hệ Thống</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body style="padding-top: 0; background:#f4f7fb;">
+
+  <div class="admin-layout">
+    <!-- Admin Sidebar -->
+    <aside class="admin-sidebar" id="admin-sidebar">
+      <div class="admin-brand">
+        <div class="brand-icon" style="width:38px;height:38px;font-size:1.15rem;">
+          <i class="bi bi-send-fill"></i>
+        </div>
+        <div>
+          <div class="brand-name text-white" style="font-size:1.25rem;">Go<span style="color:#4fb0ff;">Travel</span></div>
+          <small class="text-white-50" style="font-size:.7rem;">Admin Control Center</small>
+        </div>
+      </div>
+
+      <nav class="admin-nav">
+        <a class="admin-nav-item active" onclick="switchAdminSection('dashboard', this)">
+          <i class="bi bi-speedometer2"></i>
+          <span>Dashboard</span>
+        </a>
+        <a class="admin-nav-item" onclick="switchAdminSection('tours', this)">
+          <i class="bi bi-geo-alt"></i>
+          <span>Quản lý Tour</span>
+        </a>
+        <a class="admin-nav-item" onclick="switchAdminSection('orders', this)">
+          <i class="bi bi-receipt"></i>
+          <span>Quản lý Đơn hàng</span>
+        </a>
+        <a class="admin-nav-item" onclick="switchAdminSection('customers', this)">
+          <i class="bi bi-people"></i>
+          <span>Quản lý Khách hàng</span>
+        </a>
+        <a class="admin-nav-item" onclick="switchAdminSection('coupons', this)">
+          <i class="bi bi-tag"></i>
+          <span>Quản lý Khuyến mãi</span>
+        </a>
+
+        <hr style="border-color: rgba(255,255,255,.15); margin: 1rem 0;">
+
+        <a href="index.html" class="admin-nav-item text-warning">
+          <i class="bi bi-globe"></i>
+          <span>Xem Trang Khách Hàng</span>
+        </a>
+        <a href="javascript:void(0)" class="admin-nav-item text-danger" onclick="adminLogout()">
+          <i class="bi bi-box-arrow-right"></i>
+          <span>Đăng xuất Admin</span>
+        </a>
+      </nav>
+
+      <div class="p-3 border-top border-secondary text-white-50 small">
+        <div class="d-flex align-items-center gap-2">
+          <div class="avatar bg-primary" style="width:28px;height:28px;font-size:.75rem;">A</div>
+          <div class="text-truncate">
+            <strong class="text-white d-block" id="admin-user-name">Quản trị viên</strong>
+            <span style="font-size:.7rem;">admin@gotravel.vn</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Admin Main Area -->
+    <main class="admin-main">
+      <!-- Topbar -->
+      <header class="admin-topbar">
+        <div class="d-flex align-items-center gap-3">
+          <button class="btn btn-sm btn-outline-secondary d-lg-none" onclick="document.getElementById('admin-sidebar').classList.toggle('show')">
+            <i class="bi bi-list fs-5"></i>
+          </button>
+          <h5 class="fw-bold text-navy m-0" id="admin-section-title">Tổng quan hệ thống (Dashboard)</h5>
+        </div>
+
+        <div class="d-flex align-items-center gap-3">
+          <span class="badge bg-success-subtle text-success px-3 py-2 fw-bold">
+            <i class="bi bi-circle-fill me-1" style="font-size:.5rem;"></i>Hệ thống Online
+          </span>
+          <a href="tours.html" class="btn btn-outline-gt btn-sm" target="_blank">
+            <i class="bi bi-box-arrow-up-right me-1"></i>Xem website
+          </a>
+        </div>
+      </header>
+
+      <!-- Content Sections Container -->
+      <div class="admin-content">
+        <!-- 1. DASHBOARD OVERVIEW -->
+        <section id="sec-dashboard">
+          <!-- 4 Stat Cards -->
+          <div class="row g-3 mb-4">
+            <div class="col-12 col-sm-6 col-xl-3">
+              <div class="stat-card">
+                <div class="stat-icon pastel-orange"><i class="bi bi-cash-stack"></i></div>
+                <div>
+                  <small>Tổng doanh thu</small>
+                  <h3 id="stat-revenue">0đ</h3>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-sm-6 col-xl-3">
+              <div class="stat-card">
+                <div class="stat-icon pastel-blue"><i class="bi bi-receipt-cutoff"></i></div>
+                <div>
+                  <small>Tổng đơn hàng</small>
+                  <h3 id="stat-orders">0</h3>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-sm-6 col-xl-3">
+              <div class="stat-card">
+                <div class="stat-icon pastel-green"><i class="bi bi-people-fill"></i></div>
+                <div>
+                  <small>Tổng khách hàng</small>
+                  <h3 id="stat-customers">0</h3>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-sm-6 col-xl-3">
+              <div class="stat-card">
+                <div class="stat-icon pastel-purple"><i class="bi bi-map-fill"></i></div>
+                <div>
+                  <small>Tour đang bán</small>
+                  <h3 id="stat-tours">0</h3>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Revenue Chart & Recent Orders -->
+          <div class="row g-4">
+            <div class="col-12 col-lg-7">
+              <div class="card-gt shadow-sm h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h6 class="fw-bold text-navy m-0"><i class="bi bi-bar-chart-line text-primary me-2"></i>Doanh thu 6 tháng gần nhất (Triệu đồng)</h6>
+                  <span class="badge bg-light text-muted">2026</span>
+                </div>
+                <!-- Custom CSS Bar Chart -->
+                <div class="admin-chart-bar" id="revenue-chart-bar">
+                  <div class="bar-col">
+                    <div class="bar-fill" style="height: 45%;"><span class="bar-val">45M</span></div>
+                    <span class="bar-label">T5</span>
+                  </div>
+                  <div class="bar-col">
+                    <div class="bar-fill" style="height: 60%;"><span class="bar-val">68M</span></div>
+                    <span class="bar-label">T6</span>
+                  </div>
+                  <div class="bar-col">
+                    <div class="bar-fill" style="height: 85%;"><span class="bar-val">92M</span></div>
+                    <span class="bar-label">T7</span>
+                  </div>
+                  <div class="bar-col">
+                    <div class="bar-fill" style="height: 95%;"><span class="bar-val">115M</span></div>
+                    <span class="bar-label">T8</span>
+                  </div>
+                  <div class="bar-col">
+                    <div class="bar-fill" style="height: 75%;"><span class="bar-val">84M</span></div>
+                    <span class="bar-label">T9</span>
+                  </div>
+                  <div class="bar-col">
+                    <div class="bar-fill" style="height: 90%; background:linear-gradient(180deg, #FF8A3D, #ffaa6b);"><span class="bar-val">98M</span></div>
+                    <span class="bar-label">T10</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 col-lg-5">
+              <div class="card-gt shadow-sm h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h6 class="fw-bold text-navy m-0"><i class="bi bi-clock-history text-primary me-2"></i>Đơn hàng mới nhất</h6>
+                  <button class="btn btn-sm btn-link p-0" onclick="switchAdminSection('orders')">Tất cả</button>
+                </div>
+                <div class="d-flex flex-column gap-2" id="recent-orders-list">
+                  <!-- Injected by JS -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. QUẢN LÝ TOUR -->
+        <section id="sec-tours" class="d-none">
+          <div class="card-gt shadow-sm mb-4">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+              <div>
+                <h5 class="fw-bold text-navy m-0">Danh sách Tour du lịch</h5>
+                <small class="text-muted">Quản lý, chỉnh sửa giá và cập nhật trạng thái các tour</small>
+              </div>
+              <button class="btn btn-orange" onclick="openTourModal()">
+                <i class="bi bi-plus-circle me-1"></i>+ Thêm Tour Mới
+              </button>
+            </div>
+
+            <div class="table-responsive">
+              <table class="table table-gt">
+                <thead>
+                  <tr>
+                    <th>Ảnh</th>
+                    <th>Tên tour</th>
+                    <th>Điểm đến</th>
+                    <th>Giá bán</th>
+                    <th>Số chỗ</th>
+                    <th>Trạng thái</th>
+                    <th class="text-end">Hành động</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-tours-tbody">
+                  <!-- Injected by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3. QUẢN LÝ ĐƠN HÀNG -->
+        <section id="sec-orders" class="d-none">
+          <div class="card-gt shadow-sm mb-4">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+              <div>
+                <h5 class="fw-bold text-navy m-0">Quản lý Đơn hàng & Đặt chỗ</h5>
+                <small class="text-muted">Theo dõi và cập nhật trạng thái thanh toán của khách hàng</small>
+              </div>
+
+              <!-- Filter tabs -->
+              <div class="filter-pills d-flex flex-wrap gap-1" id="admin-order-filters">
+                <button class="btn btn-sm active" onclick="filterAdminOrders('all', this)">Tất cả</button>
+                <button class="btn btn-sm" onclick="filterAdminOrders('pending', this)">Chờ thanh toán</button>
+                <button class="btn btn-sm" onclick="filterAdminOrders('paid', this)">Đã thanh toán</button>
+                <button class="btn btn-sm" onclick="filterAdminOrders('confirmed', this)">Đã xác nhận</button>
+                <button class="btn btn-sm" onclick="filterAdminOrders('completed', this)">Hoàn thành</button>
+                <button class="btn btn-sm" onclick="filterAdminOrders('cancelled', this)">Đã hủy</button>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="table table-gt">
+                <thead>
+                  <tr>
+                    <th>Mã đơn</th>
+                    <th>Khách hàng</th>
+                    <th>Tour</th>
+                    <th>Ngày đặt</th>
+                    <th>Tổng tiền</th>
+                    <th>Trạng thái</th>
+                    <th class="text-end">Cập nhật</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-orders-tbody">
+                  <!-- Injected by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. QUẢN LÝ KHÁCH HÀNG -->
+        <section id="sec-customers" class="d-none">
+          <div class="card-gt shadow-sm mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <div>
+                <h5 class="fw-bold text-navy m-0">Quản lý Khách hàng</h5>
+                <small class="text-muted">Danh sách thành viên đăng ký trong hệ thống</small>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="table table-gt">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Họ và tên</th>
+                    <th>Email</th>
+                    <th>Số điện thoại</th>
+                    <th>Vai trò</th>
+                    <th>Trạng thái</th>
+                    <th class="text-end">Khóa / Mở</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-customers-tbody">
+                  <!-- Injected by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 5. QUẢN LÝ KHUYẾN MÃI -->
+        <section id="sec-coupons" class="d-none">
+          <div class="card-gt shadow-sm mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <div>
+                <h5 class="fw-bold text-navy m-0">Quản lý Mã Khuyến Mãi / Voucher</h5>
+                <small class="text-muted">Tạo mới và kiểm soát mã giảm giá hệ thống</small>
+              </div>
+              <button class="btn btn-orange" onclick="openCouponModal()">
+                <i class="bi bi-plus-circle me-1"></i>+ Tạo Mã Giảm Giá
+              </button>
+            </div>
+
+            <div class="table-responsive">
+              <table class="table table-gt">
+                <thead>
+                  <tr>
+                    <th>Mã Voucher</th>
+                    <th>Mức giảm</th>
+                    <th>Đơn tối thiểu</th>
+                    <th>Mô tả</th>
+                    <th>Trạng thái</th>
+                    <th class="text-end">Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-coupons-tbody">
+                  <!-- Injected by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal Thêm/Sửa Tour -->
+  <div class="modal fade" id="tourModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content border-0 shadow-lg" style="border-radius:20px;">
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold text-navy" id="tourModalTitle">Thêm Tour Du Lịch Mới</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="tour-crud-form" onsubmit="handleSaveTour(event)">
+          <div class="modal-body py-4">
+            <input type="hidden" id="tour-crud-id">
+            <div class="row g-3">
+              <div class="col-12 col-md-8">
+                <label class="form-label">Tên Tour <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="t-name" required placeholder="Ví dụ: Hạ Long – Ngắm vịnh 2N1Đ">
+              </div>
+              <div class="col-12 col-md-4">
+                <label class="form-label">Huy hiệu (Badge)</label>
+                <select class="form-select" id="t-badge">
+                  <option value="Bán chạy">Bán chạy</option>
+                  <option value="Khuyến mãi">Khuyến mãi</option>
+                  <option value="Yêu thích">Yêu thích</option>
+                  <option value="Mới">Mới</option>
+                  <option value="Hot">Hot</option>
+                </select>
+              </div>
+              <div class="col-12 col-md-4">
+                <label class="form-label">Điểm đến <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="t-destination" required placeholder="Hạ Long">
+              </div>
+              <div class="col-12 col-md-4">
+                <label class="form-label">Khu vực</label>
+                <select class="form-select" id="t-region">
+                  <option value="Miền Bắc">Miền Bắc</option>
+                  <option value="Miền Trung">Miền Trung</option>
+                  <option value="Miền Nam">Miền Nam</option>
+                  <option value="Tây Nguyên">Tây Nguyên</option>
+                </select>
+              </div>
+              <div class="col-12 col-md-4">
+                <label class="form-label">Loại hình</label>
+                <select class="form-select" id="t-type">
+                  <option value="Biển đảo">Biển đảo</option>
+                  <option value="Khám phá">Khám phá</option>
+                  <option value="Nghỉ dưỡng">Nghỉ dưỡng</option>
+                  <option value="Núi rừng">Núi rừng</option>
+                  <option value="Văn hóa">Văn hóa</option>
+                </select>
+              </div>
+              <div class="col-6 col-md-3">
+                <label class="form-label">Số ngày</label>
+                <input type="number" class="form-control" id="t-days" value="3" min="1" required>
+              </div>
+              <div class="col-6 col-md-3">
+                <label class="form-label">Số đêm</label>
+                <input type="number" class="form-control" id="t-nights" value="2" min="0" required>
+              </div>
+              <div class="col-12 col-md-6">
+                <label class="form-label">Khởi hành từ</label>
+                <input type="text" class="form-control" id="t-depart" value="Hà Nội" required>
+              </div>
+              <div class="col-12 col-md-6">
+                <label class="form-label">Giá bán hiện tại (VND) <span class="text-danger">*</span></label>
+                <input type="number" class="form-control" id="t-price" required placeholder="2990000">
+              </div>
+              <div class="col-12 col-md-6">
+                <label class="form-label">Giá gốc / Giá cũ (VND)</label>
+                <input type="number" class="form-control" id="t-oldprice" placeholder="3500000">
+              </div>
+              <div class="col-12">
+                <label class="form-label">URL Ảnh đại diện</label>
+                <input type="url" class="form-control" id="t-img" placeholder="https://images.unsplash.com/...">
+              </div>
+              <div class="col-12">
+                <label class="form-label">Mô tả tổng quan</label>
+                <textarea class="form-control" id="t-overview" rows="3" placeholder="Mô tả tóm tắt điểm nổi bật của tour..."></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Hủy</button>
+            <button type="submit" class="btn btn-orange px-4">Lưu Tour</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Thêm Mã Giảm Giá -->
+  <div class="modal fade" id="couponModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg" style="border-radius:20px;">
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold text-navy">Tạo Mã Giảm Giá Mới</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="coupon-crud-form" onsubmit="handleSaveCoupon(event)">
+          <div class="modal-body py-3">
+            <div class="mb-3">
+              <label class="form-label">Mã code (viết hoa không dấu) <span class="text-danger">*</span></label>
+              <input type="text" class="form-control text-uppercase" id="cp-code" required placeholder="VÍ DỤ: SALE2026">
+            </div>
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <label class="form-label">Loại giảm giá</label>
+                <select class="form-select" id="cp-type">
+                  <option value="percent">Phần trăm (%)</option>
+                  <option value="fixed">Số tiền cố định (đ)</option>
+                </select>
+              </div>
+              <div class="col-6">
+                <label class="form-label">Giá trị giảm <span class="text-danger">*</span></label>
+                <input type="number" class="form-control" id="cp-value" required placeholder="10 (hoặc 500000)">
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Mô tả hiển thị</label>
+              <input type="text" class="form-control" id="cp-desc" placeholder="Giảm 10% cho đơn hàng bất kỳ...">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+            <button type="submit" class="btn btn-orange">Tạo Mã</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    let adminOrderFilter = 'all';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      GTStore.init();
+      // Ensure user is recognized as admin
+      const u = GTStore.getCurrentUser();
+      if (!u || u.role !== 'admin') {
+        alert('Trang Quản trị yêu cầu quyền Admin. Vui lòng đăng nhập bằng tài khoản Quản trị viên (admin@gotravel.vn / admin123).');
+        window.location.href = 'login.html';
+        return;
+      }
+      document.getElementById('admin-user-name').textContent = u.name || 'Quản trị viên';
+
+      loadDashboardStats();
+      loadAdminTours();
+      loadAdminOrders();
+      loadAdminCustomers();
+      loadAdminCoupons();
+    });
+
+    function switchAdminSection(secName, btn) {
+      document.querySelectorAll('.admin-nav-item').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+
+      const titles = {
+        dashboard: 'Tổng quan hệ thống (Dashboard)',
+        tours: 'Quản lý danh sách Tour du lịch',
+        orders: 'Quản lý Đơn hàng & Đặt chỗ',
+        customers: 'Quản lý Khách hàng & Thành viên',
+        coupons: 'Quản lý Chương trình Khuyến mãi'
+      };
+      document.getElementById('admin-section-title').textContent = titles[secName] || 'Admin';
+
+      document.getElementById('sec-dashboard').classList.toggle('d-none', secName !== 'dashboard');
+      document.getElementById('sec-tours').classList.toggle('d-none', secName !== 'tours');
+      document.getElementById('sec-orders').classList.toggle('d-none', secName !== 'orders');
+      document.getElementById('sec-customers').classList.toggle('d-none', secName !== 'customers');
+      document.getElementById('sec-coupons').classList.toggle('d-none', secName !== 'coupons');
+
+      // Close mobile sidebar if open
+      document.getElementById('admin-sidebar').classList.remove('show');
+    }
+
+    function loadDashboardStats() {
+      const orders = GTStore.getOrders();
+      const tours = GTStore.getTours();
+      const users = GTStore.getUsers();
+
+      const totalRev = orders.filter(o => o.status !== 'cancelled').reduce((sum, o) => sum + (o.total || 0), 0);
+      document.getElementById('stat-revenue').textContent = GTApp.formatVND(totalRev);
+      document.getElementById('stat-orders').textContent = orders.length;
+      document.getElementById('stat-customers').textContent = users.length;
+      document.getElementById('stat-tours').textContent = tours.length;
+
+      // Recent Orders list (top 4)
+      const recent = orders.slice(0, 4);
+      document.getElementById('recent-orders-list').innerHTML = recent.map(o => `
+        <div class="p-2 border rounded-3 bg-light d-flex justify-content-between align-items-center">
+          <div>
+            <strong class="font-monospace text-primary small d-block">${o.code}</strong>
+            <span class="small text-navy text-truncate d-block" style="max-width:180px;">${o.tourName}</span>
+          </div>
+          <div class="text-end">
+            <strong class="text-orange small d-block">${GTApp.formatVND(o.total)}</strong>
+            <span class="badge ${o.status === 'paid' ? 'bg-success' : (o.status === 'cancelled' ? 'bg-danger' : 'bg-warning')}">${o.status}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function loadAdminTours() {
+      const tours = GTStore.getTours();
+      const tbody = document.getElementById('admin-tours-tbody');
+      tbody.innerHTML = tours.map(t => `
+        <tr>
+          <td><img src="${(t.images && t.images[0]) || FALLBACK_IMG}" style="width:48px;height:38px;object-fit:cover;border-radius:8px;"></td>
+          <td><strong class="text-navy">${t.name}</strong><br><small class="text-muted">${t.days}N${t.nights}Đ • ${t.departFrom || 'Hà Nội'}</small></td>
+          <td>${t.destination}</td>
+          <td><strong class="text-orange">${GTApp.formatVND(t.price)}</strong></td>
+          <td>${t.seats || 30}</td>
+          <td><span class="badge bg-success-subtle text-success">Đang bán</span></td>
+          <td class="text-end">
+            <a href="tour-detail.html?id=${t.id}" target="_blank" class="btn btn-sm btn-outline-secondary me-1" title="Xem trên web"><i class="bi bi-eye"></i></a>
+            <button class="btn btn-sm btn-outline-gt me-1" onclick="editTour(${t.id})" title="Sửa"><i class="bi bi-pencil"></i></button>
+            <button class="btn btn-sm btn-outline-danger" onclick="deleteTour(${t.id})" title="Xóa"><i class="bi bi-trash"></i></button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function openTourModal(tour = null) {
+      document.getElementById('tour-crud-id').value = tour ? tour.id : '';
+      document.getElementById('tourModalTitle').textContent = tour ? 'Chỉnh Sửa Tour Du Lịch' : 'Thêm Tour Du Lịch Mới';
+      document.getElementById('t-name').value = tour ? tour.name : '';
+      document.getElementById('t-badge').value = tour ? (tour.badge || 'Bán chạy') : 'Bán chạy';
+      document.getElementById('t-destination').value = tour ? tour.destination : '';
+      document.getElementById('t-region').value = tour ? (tour.region || 'Miền Bắc') : 'Miền Bắc';
+      document.getElementById('t-type').value = tour ? (tour.type || 'Biển đảo') : 'Biển đảo';
+      document.getElementById('t-days').value = tour ? tour.days : 3;
+      document.getElementById('t-nights').value = tour ? tour.nights : 2;
+      document.getElementById('t-depart').value = tour ? tour.departFrom : 'Hà Nội';
+      document.getElementById('t-price').value = tour ? tour.price : '';
+      document.getElementById('t-oldprice').value = tour ? (tour.oldPrice || '') : '';
+      document.getElementById('t-img').value = (tour && tour.images) ? tour.images[0] : '';
+      document.getElementById('t-overview').value = tour ? (tour.overview || '') : '';
+
+      new bootstrap.Modal(document.getElementById('tourModal')).show();
+    }
+
+    function editTour(id) {
+      const t = GTStore.getTourById(id);
+      if (t) openTourModal(t);
+    }
+
+    function deleteTour(id) {
+      if (confirm('Bạn có chắc chắn muốn xóa tour này khỏi hệ thống?')) {
+        GTStore.deleteTour(id);
+        loadAdminTours();
+        loadDashboardStats();
+        GTApp.toast('Đã xóa tour thành công!', 'info');
+      }
+    }
+
+    function handleSaveTour(e) {
+      e.preventDefault();
+      const id = document.getElementById('tour-crud-id').value;
+      const imgVal = document.getElementById('t-img').value.trim() || FALLBACK_IMG;
+
+      const tourData = {
+        name: document.getElementById('t-name').value.trim(),
+        badge: document.getElementById('t-badge').value,
+        destination: document.getElementById('t-destination').value.trim(),
+        region: document.getElementById('t-region').value,
+        type: document.getElementById('t-type').value,
+        days: parseInt(document.getElementById('t-days').value) || 3,
+        nights: parseInt(document.getElementById('t-nights').value) || 2,
+        departFrom: document.getElementById('t-depart').value.trim(),
+        price: parseInt(document.getElementById('t-price').value) || 2000000,
+        oldPrice: parseInt(document.getElementById('t-oldprice').value) || null,
+        images: [imgVal, PHOTOS.beach1, PHOTOS.mountain1],
+        overview: document.getElementById('t-overview').value.trim()
+      };
+      if (id) tourData.id = id;
+
+      GTStore.saveTour(tourData);
+      bootstrap.Modal.getInstance(document.getElementById('tourModal')).hide();
+      loadAdminTours();
+      loadDashboardStats();
+      GTApp.toast(id ? 'Cập nhật tour thành công!' : 'Thêm tour mới thành công!', 'success');
+    }
+
+    function filterAdminOrders(status, btn) {
+      adminOrderFilter = status;
+      document.querySelectorAll('#admin-order-filters .btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      loadAdminOrders();
+    }
+
+    function loadAdminOrders() {
+      const orders = GTStore.getOrders();
+      const filtered = orders.filter(o => adminOrderFilter === 'all' || o.status === adminOrderFilter);
+      const tbody = document.getElementById('admin-orders-tbody');
+
+      const statusMap = {
+        pending: { text: 'Chờ thanh toán', class: 'st-pending' },
+        paid: { text: 'Đã thanh toán', class: 'st-paid' },
+        confirmed: { text: 'Đã xác nhận', class: 'st-confirmed' },
+        completed: { text: 'Hoàn thành', class: 'st-completed' },
+        cancelled: { text: 'Đã hủy', class: 'st-cancelled' }
+      };
+
+      tbody.innerHTML = filtered.map(o => {
+        const st = statusMap[o.status] || { text: o.status, class: 'st-pending' };
+        return `
+          <tr>
+            <td><strong class="font-monospace text-primary">${o.code}</strong></td>
+            <td>
+              <strong>${o.customer?.name || 'Khách'}</strong>
+              <small class="text-muted d-block">${o.customer?.phone || ''}</small>
+            </td>
+            <td><span class="text-truncate d-inline-block" style="max-width:180px;">${o.tourName}</span></td>
+            <td>${GTApp.formatDateVN(o.createdAt)}</td>
+            <td><strong class="text-orange">${GTApp.formatVND(o.total)}</strong></td>
+            <td><span class="status ${st.class}">${st.text}</span></td>
+            <td class="text-end">
+              <select class="form-select form-select-sm d-inline-block" style="width:145px;" onchange="changeOrderStatus('${o.code}', this.value)">
+                <option value="pending" ${o.status === 'pending' ? 'selected' : ''}>Chờ thanh toán</option>
+                <option value="paid" ${o.status === 'paid' ? 'selected' : ''}>Đã thanh toán</option>
+                <option value="confirmed" ${o.status === 'confirmed' ? 'selected' : ''}>Đã xác nhận</option>
+                <option value="completed" ${o.status === 'completed' ? 'selected' : ''}>Hoàn thành</option>
+                <option value="cancelled" ${o.status === 'cancelled' ? 'selected' : ''}>Đã hủy</option>
+              </select>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function changeOrderStatus(code, newStatus) {
+      GTStore.updateOrderStatus(code, newStatus);
+      loadAdminOrders();
+      loadDashboardStats();
+      GTApp.toast(`Đã cập nhật đơn hàng ${code} sang ${newStatus}!`, 'success');
+    }
+
+    function loadAdminCustomers() {
+      const users = GTStore.getUsers();
+      const tbody = document.getElementById('admin-customers-tbody');
+      tbody.innerHTML = users.map(u => `
+        <tr>
+          <td><span class="text-muted">#${u.id}</span></td>
+          <td><strong>${u.name}</strong></td>
+          <td>${u.email}</td>
+          <td>${u.phone || '--'}</td>
+          <td><span class="badge ${u.role === 'admin' ? 'bg-primary' : 'bg-light text-muted'}">${u.role}</span></td>
+          <td>
+            <span class="badge ${u.status === 'active' ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'}">
+              ${u.status === 'active' ? 'Hoạt động' : 'Tạm khóa'}
+            </span>
+          </td>
+          <td class="text-end">
+            ${u.role !== 'admin' ? `
+              <button class="btn btn-sm ${u.status === 'active' ? 'btn-outline-danger' : 'btn-outline-success'}" onclick="toggleCustomerStatus(${u.id})">
+                ${u.status === 'active' ? '<i class="bi bi-lock me-1"></i>Khóa' : '<i class="bi bi-unlock me-1"></i>Mở khóa'}
+              </button>
+            ` : '<small class="text-muted">Admin gốc</small>'}
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function toggleCustomerStatus(id) {
+      GTStore.toggleUserStatus(id);
+      loadAdminCustomers();
+      GTApp.toast('Đã cập nhật trạng thái khách hàng!', 'info');
+    }
+
+    function loadAdminCoupons() {
+      const coupons = GTStore.getCoupons();
+      const tbody = document.getElementById('admin-coupons-tbody');
+      tbody.innerHTML = coupons.map(c => `
+        <tr>
+          <td><span class="coupon-code">${c.code}</span></td>
+          <td><strong>${c.type === 'percent' ? `${c.value}%` : GTApp.formatVND(c.value)}</strong></td>
+          <td>${c.minOrder ? GTApp.formatVND(c.minOrder) : '0đ'}</td>
+          <td>${c.desc || ''}</td>
+          <td><span class="badge bg-success">Hoạt động</span></td>
+          <td class="text-end">
+            <button class="btn btn-sm btn-outline-danger" onclick="deleteCoupon('${c.code}')"><i class="bi bi-trash"></i></button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function openCouponModal() {
+      new bootstrap.Modal(document.getElementById('couponModal')).show();
+    }
+
+    function handleSaveCoupon(e) {
+      e.preventDefault();
+      const code = document.getElementById('cp-code').value.trim().toUpperCase();
+      const type = document.getElementById('cp-type').value;
+      const value = parseInt(document.getElementById('cp-value').value);
+      const desc = document.getElementById('cp-desc').value.trim();
+
+      GTStore.saveCoupon({ code, type, value, max: 2000000, minOrder: 0, desc, active: true });
+      bootstrap.Modal.getInstance(document.getElementById('couponModal')).hide();
+      loadAdminCoupons();
+      GTApp.toast(`Đã tạo mã giảm giá ${code}!`, 'success');
+    }
+
+    function deleteCoupon(code) {
+      if (confirm(`Bạn có chắc muốn xóa mã ${code}?`)) {
+        GTStore.deleteCoupon(code);
+        loadAdminCoupons();
+        GTApp.toast('Đã xóa mã giảm giá', 'info');
+      }
+    }
+
+    function adminLogout() {
+      GTStore.logout();
+      window.location.href = 'login.html';
+    }
+  </script>
+</body>
+</html>

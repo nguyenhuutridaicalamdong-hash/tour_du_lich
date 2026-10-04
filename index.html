@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GoTravel - Hệ Thống Bán Hàng & Đặt Tour Du Lịch Hàng Đầu</title>
+  <meta name="description" content="GoTravel - Hệ thống đặt tour du lịch hiện đại, trẻ trung. Khám phá các tour du lịch Hạ Long, Đà Nẵng, Phú Quốc, Đà Lạt với giá tốt nhất và thanh toán an toàn.">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Bootstrap 5 CSS & Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Dynamic Header injected by GTApp -->
+  <div id="site-header-container"></div>
+
+  <!-- HERO BANNER -->
+  <section class="hero">
+    <div class="hero-bg" style="background-image: url('https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=1920&q=80');"></div>
+    <div class="container py-5">
+      <div class="row align-items-center g-4">
+        <div class="col-12 col-lg-7">
+          <div class="hero-eyebrow mb-3">
+            <i class="bi bi-compass text-orange"></i> ĐẶT TOUR DU LỊCH DỄ DÀNG
+          </div>
+          <h1 class="display-4 fw-bold">Khám phá những<br><span>hành trình tuyệt vời</span></h1>
+          <p class="lead">
+            Trải nghiệm những điểm đến hấp dẫn, dịch vụ chất lượng và hành trình đáng nhớ cùng GoTravel!
+          </p>
+          <div class="d-flex flex-wrap gap-3 mt-4">
+            <a href="tours.html" class="btn btn-orange btn-lg px-4 shadow-sm">
+              <i class="bi bi-search me-2"></i>Khám phá tour
+            </a>
+            <a href="promotions.html" class="btn btn-ghost-light btn-lg px-4">
+              <i class="bi bi-tag-fill me-2 text-warning"></i>Xem ưu đãi
+            </a>
+          </div>
+
+          <!-- Hero stats -->
+          <div class="hero-stats">
+            <div>
+              <strong>50K+</strong>
+              <small>Khách hàng tin chọn</small>
+            </div>
+            <div>
+              <strong>200+</strong>
+              <small>Tour du lịch độc đáo</small>
+            </div>
+            <div>
+              <strong>99.4%</strong>
+              <small>Hài lòng & Đánh giá 5★</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-lg-5 text-lg-end">
+          <div class="hero-script">
+            “Đi để trải nghiệm<br>
+            Đi để <span>yêu đời!</span>”
+          </div>
+          <div class="mt-4 d-inline-block text-start p-3 rounded-4" style="background:rgba(255,255,255,.12); backdrop-filter:blur(8px); border:1px solid rgba(255,255,255,.2); max-width:320px;">
+            <div class="d-flex align-items-center gap-3">
+              <div class="rounded-circle bg-orange text-white p-2 d-grid place-items-center fs-4" style="width:48px;height:48px;">
+                <i class="bi bi-award-fill"></i>
+              </div>
+              <div>
+                <div class="fw-bold">GoTravel Best Choice</div>
+                <small class="text-white-50">Top 10 Đơn vị lữ hành uy tín 2026</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TOUR SEARCH BOX (FLOATING OVER HERO) -->
+  <section class="search-wrap">
+    <div class="container">
+      <div class="search-box">
+        <!-- Single Tab: Only Tour du lịch, NO Flights, NO Hotels -->
+        <div class="search-tabs">
+          <div class="search-tab">
+            <i class="bi bi-geo-alt-fill fs-5"></i> Tour du lịch
+          </div>
+        </div>
+
+        <form id="hero-search-form" onsubmit="handleHeroSearch(event)">
+          <div class="row g-2 align-items-center">
+            <!-- 1. Điểm đến -->
+            <div class="col-12 col-md-6 col-lg-3">
+              <div class="search-field">
+                <i class="bi bi-geo-alt"></i>
+                <label>Điểm đến</label>
+                <input type="text" id="search-dest" placeholder="Chọn điểm đến hoặc nhập tên..." list="destination-list">
+                <datalist id="destination-list">
+                  <option value="Hạ Long">
+                  <option value="Đà Nẵng">
+                  <option value="Đà Lạt">
+                  <option value="Phú Quốc">
+                  <option value="Sa Pa">
+                  <option value="Hội An">
+                  <option value="Huế">
+                  <option value="Hà Giang">
+                </datalist>
+              </div>
+            </div>
+
+            <!-- 2. Ngày đi -->
+            <div class="col-12 col-md-6 col-lg-2">
+              <div class="search-field">
+                <i class="bi bi-calendar-event"></i>
+                <label>Ngày đi</label>
+                <input type="date" id="search-dep-date">
+              </div>
+            </div>
+
+            <!-- 3. Ngày về -->
+            <div class="col-12 col-md-6 col-lg-2">
+              <div class="search-field">
+                <i class="bi bi-calendar-check"></i>
+                <label>Ngày về</label>
+                <input type="date" id="search-return-date">
+              </div>
+            </div>
+
+            <!-- 4. Số lượng khách -->
+            <div class="col-12 col-md-6 col-lg-3">
+              <div class="search-field dropdown">
+                <i class="bi bi-people"></i>
+                <label>Số lượng khách</label>
+                <div class="guest-display" data-bs-toggle="dropdown" id="guest-label">2 người lớn, 0 trẻ em</div>
+                <div class="dropdown-menu guest-menu shadow-lg border-0" onclick="event.stopPropagation()">
+                  <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                      <strong class="d-block text-navy">Người lớn</strong>
+                      <small class="text-muted">Từ 12 tuổi trở lên</small>
+                    </div>
+                    <div class="stepper">
+                      <button type="button" onclick="updateGuests('adults', -1)"><i class="bi bi-dash"></i></button>
+                      <span id="count-adults">2</span>
+                      <button type="button" onclick="updateGuests('adults', 1)"><i class="bi bi-plus"></i></button>
+                    </div>
+                  </div>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <strong class="d-block text-navy">Trẻ em</strong>
+                      <small class="text-muted">Dưới 12 tuổi (50% giá)</small>
+                    </div>
+                    <div class="stepper">
+                      <button type="button" onclick="updateGuests('children', -1)"><i class="bi bi-dash"></i></button>
+                      <span id="count-children">0</span>
+                      <button type="button" onclick="updateGuests('children', 1)"><i class="bi bi-plus"></i></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 5. Button Tìm kiếm (màu cam) -->
+            <div class="col-12 col-lg-2">
+              <button type="submit" class="btn btn-orange w-100 search-btn fw-bold d-flex align-items-center justify-content-center gap-2">
+                <i class="bi bi-search"></i>
+                <span>Tìm kiếm</span>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- USP FEATURES SECTION (6 items với icon pastel tròn) -->
+  <section class="section pb-4">
+    <div class="container">
+      <div class="row g-3">
+        <div class="col-6 col-md-4 col-lg-2">
+          <div class="usp-item">
+            <div class="usp-icon pastel-blue">
+              <i class="bi bi-shield-check"></i>
+            </div>
+            <div>
+              <h6>Thanh toán an toàn</h6>
+              <small>Bảo mật tuyệt đối</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-6 col-md-4 col-lg-2">
+          <div class="usp-item">
+            <div class="usp-icon pastel-orange">
+              <i class="bi bi-headset"></i>
+            </div>
+            <div>
+              <h6>Hỗ trợ 24/7</h6>
+              <small>Luôn bên bạn</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-6 col-md-4 col-lg-2">
+          <div class="usp-item">
+            <div class="usp-icon pastel-green">
+              <i class="bi bi-tags-fill"></i>
+            </div>
+            <div>
+              <h6>Ưu đãi hấp dẫn</h6>
+              <small>Giá tốt mỗi ngày</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-6 col-md-4 col-lg-2">
+          <div class="usp-item">
+            <div class="usp-icon pastel-purple">
+              <i class="bi bi-patch-check-fill"></i>
+            </div>
+            <div>
+              <h6>Đối tác uy tín</h6>
+              <small>Chất lượng hàng đầu</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-6 col-md-4 col-lg-2">
+          <div class="usp-item">
+            <div class="usp-icon pastel-teal">
+              <i class="bi bi-map-fill"></i>
+            </div>
+            <div>
+              <h6>Đa dạng lựa chọn</h6>
+              <small>Nhiều điểm đến</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-6 col-md-4 col-lg-2">
+          <div class="usp-item">
+            <div class="usp-icon pastel-pink">
+              <i class="bi bi-emoji-smile-fill"></i>
+            </div>
+            <div>
+              <h6>Trải nghiệm tuyệt vời</h6>
+              <small>Hài lòng là ưu tiên</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TOUR NỔI BẬT (4 tour cards trên desktop) -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <span class="section-eyebrow">HÀNH TRÌNH ĐẶC SẮC</span>
+          <h2>Tour du lịch nổi bật</h2>
+          <p>Những hành trình được yêu thích nhất hiện nay</p>
+        </div>
+        <a href="tours.html" class="link-arrow text-primary fw-bold">
+          Xem tất cả <i class="bi bi-arrow-right"></i>
+        </a>
+      </div>
+
+      <div class="row g-4" id="featured-tours-row">
+        <!-- Rendered by JS: 4 tours -->
+      </div>
+    </div>
+  </section>
+
+  <!-- BANNER KHUYẾN MÃI -->
+  <section class="section-sm bg-soft">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <span class="section-eyebrow">SIÊU ƯU ĐÃI</span>
+          <h2>Chương trình khuyến mãi hot</h2>
+          <p>Săn deal du lịch tiết kiệm cực đã cùng GoTravel</p>
+        </div>
+        <a href="promotions.html" class="link-arrow text-primary fw-bold">
+          Tất cả ưu đãi <i class="bi bi-arrow-right"></i>
+        </a>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-12 col-md-4">
+          <div class="promo-card" onclick="window.location.href='promotions.html'">
+            <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80" alt="Giảm đến 30%">
+            <div>
+              <span class="promo-chip mb-2"><i class="bi bi-fire me-1"></i>Mã: SUMMER30</span>
+              <h3>GIẢM ĐẾN 30%</h3>
+              <p class="small text-white-50 m-0">Cho các tour biển đảo hè này - Hạ Long, Phú Quốc, Nha Trang</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-4">
+          <div class="promo-card" onclick="window.location.href='promotions.html'">
+            <img src="https://images.unsplash.com/photo-1506953823976-52e1fdc0149a?auto=format&fit=crop&w=800&q=80" alt="Ưu đãi mùa hè">
+            <div>
+              <span class="promo-chip mb-2" style="background:#1688E8;"><i class="bi bi-sun-fill me-1"></i>Đến 31/12</span>
+              <h3>ƯU ĐÃI MÙA HÈ</h3>
+              <p class="small text-white-50 m-0">Combo nhóm gia đình từ 4 người tiết kiệm đến 2.000.000đ</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-4">
+          <div class="promo-card" onclick="window.location.href='promotions.html'">
+            <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=800&q=80" alt="Deal cuối tuần">
+            <div>
+              <span class="promo-chip mb-2" style="background:#7c4dff;"><i class="bi bi-gift-fill me-1"></i>Mã: WEEKEND500</span>
+              <h3>DEAL CUỐI TUẦN</h3>
+              <p class="small text-white-50 m-0">Giảm ngay 500.000đ trực tiếp khi thanh toán đơn từ 3 triệu</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ĐIỂM ĐẾN PHỔ BIẾN -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <span class="section-eyebrow">VIỆT NAM VẺ ĐẸP BẤT TẬN</span>
+          <h2>Điểm đến phổ biến</h2>
+          <p>Khám phá những vùng đất tuyệt mỹ được du khách yêu thích nhất</p>
+        </div>
+        <a href="tours.html" class="link-arrow text-primary fw-bold">
+          Khám phá thêm <i class="bi bi-arrow-right"></i>
+        </a>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-12 col-md-6 col-lg-4">
+          <a href="tours.html?dest=Hạ Long" class="dest-card dest-tall">
+            <img src="https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=800&q=80" alt="Hạ Long">
+            <div class="dest-info">
+              <h5>Hạ Long – Quảng Ninh</h5>
+              <small>12 tour đang khởi hành</small>
+            </div>
+          </a>
+        </div>
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="row g-3 h-100">
+            <div class="col-12">
+              <a href="tours.html?dest=Đà Nẵng" class="dest-card" style="height:218px;">
+                <img src="https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?auto=format&fit=crop&w=800&q=80" alt="Đà Nẵng - Hội An">
+                <div class="dest-info">
+                  <h5>Đà Nẵng – Hội An</h5>
+                  <small>18 tour đang khởi hành</small>
+                </div>
+              </a>
+            </div>
+            <div class="col-12">
+              <a href="tours.html?dest=Phú Quốc" class="dest-card" style="height:218px;">
+                <img src="https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=800&q=80" alt="Phú Quốc">
+                <div class="dest-info">
+                  <h5>Phú Quốc – Đảo Ngọc</h5>
+                  <small>15 tour đang khởi hành</small>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-md-12 col-lg-4">
+          <div class="row g-3 h-100">
+            <div class="col-6 col-lg-12">
+              <a href="tours.html?dest=Đà Lạt" class="dest-card" style="height:218px;">
+                <img src="https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=800&q=80" alt="Đà Lạt">
+                <div class="dest-info">
+                  <h5>Đà Lạt – Ngàn hoa</h5>
+                  <small>14 tour đang khởi hành</small>
+                </div>
+              </a>
+            </div>
+            <div class="col-6 col-lg-12">
+              <a href="tours.html?dest=Sa Pa" class="dest-card" style="height:218px;">
+                <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=800&q=80" alt="Sa Pa">
+                <div class="dest-info">
+                  <h5>Sa Pa – Fansipan</h5>
+                  <small>9 tour đang khởi hành</small>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA SECTION -->
+  <section class="section pt-0">
+    <div class="container">
+      <div class="cta-box">
+        <div class="row align-items-center g-4">
+          <div class="col-12 col-lg-8">
+            <span class="badge bg-warning text-dark mb-2 px-3 py-2 fw-bold">SẴN SÀNG KHỞI HÀNH</span>
+            <h2 class="display-6 fw-bold mb-3">Lên kế hoạch cho kỳ nghỉ hoàn hảo của bạn ngay hôm nay!</h2>
+            <p class="lead mb-0 text-white-50">
+              Nhận ngay mã voucher <strong>GOTRAVEL10</strong> giảm 10% cho đơn đặt tour đầu tiên. Hỗ trợ tư vấn tận tình 24/7.
+            </p>
+          </div>
+          <div class="col-12 col-lg-4 text-lg-end">
+            <a href="tours.html" class="btn btn-orange btn-lg px-4 py-3 shadow">
+              <i class="bi bi-airplane me-2"></i>Đặt tour ngay bây giờ
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer Container injected by GTApp -->
+  <div id="site-footer-container"></div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    let guestCount = { adults: 2, children: 0 };
+
+    function updateGuests(type, delta) {
+      if (type === 'adults') {
+        guestCount.adults = Math.max(1, guestCount.adults + delta);
+        document.getElementById('count-adults').textContent = guestCount.adults;
+      } else {
+        guestCount.children = Math.max(0, guestCount.children + delta);
+        document.getElementById('count-children').textContent = guestCount.children;
+      }
+      document.getElementById('guest-label').textContent = `${guestCount.adults} người lớn, ${guestCount.children} trẻ em`;
+    }
+
+    function handleHeroSearch(e) {
+      e.preventDefault();
+      const dest = document.getElementById('search-dest').value.trim();
+      const depDate = document.getElementById('search-dep-date').value;
+      const retDate = document.getElementById('search-return-date').value;
+      const params = new URLSearchParams();
+      if (dest) params.append('dest', dest);
+      if (depDate) params.append('depDate', depDate);
+      if (retDate) params.append('retDate', retDate);
+      params.append('adults', guestCount.adults);
+      params.append('children', guestCount.children);
+      window.location.href = `tours.html?${params.toString()}`;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Inject Header & Footer
+      document.getElementById('site-header-container').innerHTML = GTApp.getHeaderHTML('home');
+      document.getElementById('site-footer-container').innerHTML = GTApp.getFooterHTML();
+      GTApp.updateHeaderUser();
+      GTApp.updateCartBadge();
+      GTApp.setupSearchOverlay();
+
+      // Set default search dates
+      const today = new Date();
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 5);
+      const afterTomorrow = new Date(tomorrow);
+      afterTomorrow.setDate(afterTomorrow.getDate() + 3);
+      
+      const depInput = document.getElementById('search-dep-date');
+      const retInput = document.getElementById('search-return-date');
+      if (depInput && !depInput.value) depInput.value = toISODate(tomorrow);
+      if (retInput && !retInput.value) retInput.value = toISODate(afterTomorrow);
+
+      // Render 4 Featured Tours
+      const featuredContainer = document.getElementById('featured-tours-row');
+      const tours = GTStore.getTours();
+      const featured = tours.slice(0, 4);
+      featuredContainer.innerHTML = featured.map(t => GTApp.createTourCardHTML(t)).join('');
+    });
+  </script>
+</body>
+</html>

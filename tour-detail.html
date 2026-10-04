@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chi Tiết Tour Du Lịch - GoTravel</title>
+  <meta name="description" content="Chi tiết lịch trình, bảng giá và dịch vụ tour du lịch chất lượng cao cùng GoTravel.">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div id="site-header-container"></div>
+
+  <!-- Breadcrumb Bar -->
+  <div class="bg-white border-bottom py-2">
+    <div class="container">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0 small">
+          <li class="breadcrumb-item"><a href="index.html">Trang chủ</a></li>
+          <li class="breadcrumb-item"><a href="tours.html">Tour du lịch</a></li>
+          <li class="breadcrumb-item active text-truncate" id="tour-crumb-title" aria-current="page">Chi tiết tour</li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+
+  <main class="section pt-4">
+    <div class="container">
+      <!-- Title & Basic Meta -->
+      <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
+        <div>
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <span id="tour-badge" class="badge bg-warning text-dark px-3 py-1 fw-bold">Bán chạy</span>
+            <span class="text-muted small"><i class="bi bi-geo-alt-fill text-primary me-1"></i><span id="tour-destination">Điểm đến</span></span>
+          </div>
+          <h1 id="tour-title" class="fw-bold text-navy h2 mb-2">Tên Tour Du Lịch Đang Tải...</h1>
+          <div class="d-flex flex-wrap align-items-center gap-3 text-muted small">
+            <div class="stars text-warning">
+              <i class="bi bi-star-fill"></i>
+              <strong class="text-navy ms-1" id="tour-rating">4.8</strong>
+              <span>(<span id="tour-reviews">320</span> đánh giá)</span>
+            </div>
+            <span>•</span>
+            <span><i class="bi bi-clock me-1 text-primary"></i><span id="tour-duration">3 ngày 2 đêm</span></span>
+            <span>•</span>
+            <span><i class="bi bi-signpost-2 me-1 text-primary"></i>Khởi hành từ: <strong class="text-navy" id="tour-depart">Hà Nội</strong></span>
+          </div>
+        </div>
+
+        <div class="d-flex gap-2">
+          <button id="btn-share" class="btn btn-outline-secondary btn-sm" onclick="copyTourLink()">
+            <i class="bi bi-share me-1"></i>Chia sẻ
+          </button>
+          <button id="btn-fav-detail" class="btn btn-outline-danger btn-sm" onclick="toggleDetailFav()">
+            <i class="bi bi-heart me-1"></i>Yêu thích
+          </button>
+        </div>
+      </div>
+
+      <!-- Image Gallery (1 big main + 4 sub) -->
+      <div class="gallery mb-4" id="gallery-container">
+        <!-- Injected by JS -->
+      </div>
+
+      <!-- Layout: Content (Left) + Sticky Booking Box (Right) -->
+      <div class="row g-4">
+        <!-- Main Content -->
+        <div class="col-12 col-lg-8">
+          <!-- Key features info pills -->
+          <div class="row g-2 mb-4">
+            <div class="col-6 col-md-3">
+              <div class="info-pill">
+                <i class="bi bi-calendar3"></i>
+                <div>
+                  <small>Thời lượng</small>
+                  <strong id="pill-duration">--</strong>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 col-md-3">
+              <div class="info-pill">
+                <i class="bi bi-bus-front"></i>
+                <div>
+                  <small>Phương tiện</small>
+                  <strong>Xe du lịch đời mới</strong>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 col-md-3">
+              <div class="info-pill">
+                <i class="bi bi-people"></i>
+                <div>
+                  <small>Quy mô đoàn</small>
+                  <strong>Tối đa 25-30 khách</strong>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 col-md-3">
+              <div class="info-pill">
+                <i class="bi bi-shield-check"></i>
+                <div>
+                  <small>Bảo hiểm</small>
+                  <strong>Tới 100.000.000đ</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section Nav Tabs -->
+          <ul class="nav nav-pills detail-tabs mb-4 gap-2">
+            <li class="nav-item"><a class="nav-link active" href="#section-overview">Tổng quan</a></li>
+            <li class="nav-item"><a class="nav-link" href="#section-itinerary">Lịch trình</a></li>
+            <li class="nav-item"><a class="nav-link" href="#section-services">Dịch vụ bao gồm</a></li>
+            <li class="nav-item"><a class="nav-link" href="#section-terms">Điều khoản & Hoàn hủy</a></li>
+            <li class="nav-item"><a class="nav-link" href="#section-reviews">Đánh giá</a></li>
+          </ul>
+
+          <!-- 1. Tổng quan -->
+          <section id="section-overview" class="card-gt mb-4">
+            <h4 class="fw-bold text-navy mb-3"><i class="bi bi-info-circle text-primary me-2"></i>Tổng quan chuyến đi</h4>
+            <p id="tour-overview" class="lead fs-6 text-muted-2" style="line-height:1.8;"></p>
+            <div class="row g-3 mt-2">
+              <div class="col-12 col-md-4">
+                <div class="p-3 rounded-3 bg-light">
+                  <strong class="d-block text-navy mb-1"><i class="bi bi-check-circle-fill text-success me-1"></i>Trải nghiệm đỉnh cao</strong>
+                  <small class="text-muted">Các điểm check-in hot nhất, view đắt giá và lịch trình tối ưu.</small>
+                </div>
+              </div>
+              <div class="col-12 col-md-4">
+                <div class="p-3 rounded-3 bg-light">
+                  <strong class="d-block text-navy mb-1"><i class="bi bi-cup-hot-fill text-warning me-1"></i>Ẩm thực đặc sản</strong>
+                  <small class="text-muted">Thực đơn đậm phong vị địa phương được thiết kế chu đáo.</small>
+                </div>
+              </div>
+              <div class="col-12 col-md-4">
+                <div class="p-3 rounded-3 bg-light">
+                  <strong class="d-block text-navy mb-1"><i class="bi bi-person-check-fill text-primary me-1"></i>Hướng dẫn viên tận tâm</strong>
+                  <small class="text-muted">Được đào tạo bài bản, am hiểu văn hóa và hỗ trợ 24/7.</small>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 2. Lịch trình -->
+          <section id="section-itinerary" class="card-gt mb-4">
+            <h4 class="fw-bold text-navy mb-4"><i class="bi bi-map text-primary me-2"></i>Lịch trình chi tiết</h4>
+            <div class="timeline" id="itinerary-timeline">
+              <!-- Rendered by JS -->
+            </div>
+          </section>
+
+          <!-- 3. Dịch vụ bao gồm & không bao gồm -->
+          <section id="section-services" class="card-gt mb-4">
+            <h4 class="fw-bold text-navy mb-3"><i class="bi bi-card-checklist text-primary me-2"></i>Dịch vụ đi kèm</h4>
+            <div class="row g-4">
+              <div class="col-12 col-md-6">
+                <h6 class="fw-bold text-success mb-2"><i class="bi bi-check2-circle me-1"></i>Dịch vụ bao gồm:</h6>
+                <ul class="check-list yes" id="includes-list"></ul>
+              </div>
+              <div class="col-12 col-md-6">
+                <h6 class="fw-bold text-danger mb-2"><i class="bi bi-x-circle me-1"></i>Dịch vụ không bao gồm:</h6>
+                <ul class="check-list no" id="excludes-list"></ul>
+              </div>
+            </div>
+          </section>
+
+          <!-- 4. Điều khoản -->
+          <section id="section-terms" class="card-gt mb-4">
+            <h4 class="fw-bold text-navy mb-3"><i class="bi bi-shield-lock text-primary me-2"></i>Chính sách & Điều khoản</h4>
+            <ul class="check-list text-muted-2" id="terms-list"></ul>
+          </section>
+
+          <!-- 5. Đánh giá khách hàng -->
+          <section id="section-reviews" class="card-gt mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <h4 class="fw-bold text-navy m-0"><i class="bi bi-chat-heart text-primary me-2"></i>Đánh giá từ khách hàng</h4>
+              <button class="btn btn-sm btn-outline-gt" onclick="openReviewPrompt()">Viết đánh giá</button>
+            </div>
+
+            <div class="row align-items-center mb-4 p-3 bg-light rounded-4">
+              <div class="col-12 col-md-4 text-center border-end">
+                <div class="rating-big" id="review-score">4.8</div>
+                <div class="stars text-warning my-1">
+                  <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i>
+                </div>
+                <small class="text-muted">Dựa trên <span id="review-total-count">320</span> đánh giá thực tế</small>
+              </div>
+              <div class="col-12 col-md-8 px-md-4 mt-3 mt-md-0">
+                <div class="d-flex align-items-center gap-2 mb-1">
+                  <small class="text-nowrap" style="width:40px;">5 sao</small>
+                  <div class="progress flex-grow-1" style="height:8px;"><div class="progress-bar bg-warning" style="width:85%"></div></div>
+                  <small class="text-muted text-nowrap">85%</small>
+                </div>
+                <div class="d-flex align-items-center gap-2 mb-1">
+                  <small class="text-nowrap" style="width:40px;">4 sao</small>
+                  <div class="progress flex-grow-1" style="height:8px;"><div class="progress-bar bg-warning" style="width:12%"></div></div>
+                  <small class="text-muted text-nowrap">12%</small>
+                </div>
+                <div class="d-flex align-items-center gap-2 mb-1">
+                  <small class="text-nowrap" style="width:40px;">3 sao</small>
+                  <div class="progress flex-grow-1" style="height:8px;"><div class="progress-bar bg-warning" style="width:3%"></div></div>
+                  <small class="text-muted text-nowrap">3%</small>
+                </div>
+              </div>
+            </div>
+
+            <div id="reviews-list">
+              <!-- Rendered by JS -->
+            </div>
+          </section>
+        </div>
+
+        <!-- Sticky Booking Widget (Right) -->
+        <div class="col-12 col-lg-4">
+          <div class="card-gt booking-widget shadow">
+            <!-- Price Display -->
+            <div class="d-flex align-items-baseline justify-content-between mb-3 pb-3 border-bottom">
+              <div>
+                <span class="text-muted small d-block">Giá chỉ từ:</span>
+                <span class="price-now fs-3 text-orange fw-bold" id="widget-price">0đ</span>
+                <span class="price-old ms-2" id="widget-old-price">0đ</span>
+              </div>
+              <span id="widget-discount-badge" class="discount-tag fs-6">-15%</span>
+            </div>
+
+            <form id="booking-widget-form" onsubmit="handleProceedBooking(event)">
+              <!-- 1. Chọn ngày khởi hành -->
+              <div class="mb-3">
+                <label class="form-label d-flex justify-content-between">
+                  <span><i class="bi bi-calendar-check text-primary me-1"></i>Chọn ngày khởi hành</span>
+                  <small class="text-primary fw-normal">Có <span id="dep-count">6</span> lịch</small>
+                </label>
+                <div id="departure-options" class="d-flex flex-column gap-2" style="max-height:220px; overflow-y:auto;">
+                  <!-- Injected by JS -->
+                </div>
+              </div>
+
+              <!-- 2. Chọn số lượng khách -->
+              <div class="mb-3">
+                <label class="form-label"><i class="bi bi-people text-primary me-1"></i>Số lượng hành khách</label>
+                <div class="p-3 bg-light rounded-3">
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div>
+                      <strong class="d-block small text-navy">Người lớn</strong>
+                      <small class="text-muted" id="price-adult-note">100% giá</small>
+                    </div>
+                    <div class="stepper">
+                      <button type="button" onclick="widgetGuestChange('adults', -1)"><i class="bi bi-dash"></i></button>
+                      <span id="widget-adults">2</span>
+                      <button type="button" onclick="widgetGuestChange('adults', 1)"><i class="bi bi-plus"></i></button>
+                    </div>
+                  </div>
+
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <strong class="d-block small text-navy">Trẻ em (5-11 tuổi)</strong>
+                      <small class="text-muted">50% giá tour</small>
+                    </div>
+                    <div class="stepper">
+                      <button type="button" onclick="widgetGuestChange('children', -1)"><i class="bi bi-dash"></i></button>
+                      <span id="widget-children">0</span>
+                      <button type="button" onclick="widgetGuestChange('children', 1)"><i class="bi bi-plus"></i></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 3. Tạm tính -->
+              <div class="p-3 mb-3 rounded-3" style="background:#fff6ee; border:1px dashed #ffb27d;">
+                <div class="d-flex justify-content-between small text-muted mb-1">
+                  <span>Tạm tính (<span id="calc-guests-label">2 người</span>):</span>
+                  <span id="calc-subtotal" class="fw-semibold text-navy">0đ</span>
+                </div>
+                <div class="d-flex justify-content-between small text-success mb-2">
+                  <span>Tiết kiệm:</span>
+                  <span id="calc-discount">-0đ</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-baseline pt-2 border-top">
+                  <strong class="text-navy">Tổng thanh toán:</strong>
+                  <strong class="text-orange fs-4 fw-bold" id="calc-total">0đ</strong>
+                </div>
+              </div>
+
+              <!-- Action buttons -->
+              <button type="submit" class="btn btn-orange btn-lg w-100 mb-2 py-3 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2">
+                <i class="bi bi-lightning-charge-fill"></i>
+                <span>Đặt tour ngay</span>
+              </button>
+
+              <button type="button" class="btn btn-outline-gt w-100 py-2" onclick="handleAddToCart()">
+                <i class="bi bi-cart-plus me-1"></i>Thêm vào giỏ hàng
+              </button>
+
+              <div class="mt-3 text-center small text-muted">
+                <i class="bi bi-shield-check text-success me-1"></i>Miễn phí hủy trong 24h đầu tiên • Giữ chỗ tức thì
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Related Tours Section -->
+      <section class="mt-5 pt-4 border-top">
+        <div class="section-head mb-4">
+          <div>
+            <span class="section-eyebrow">KHÁM PHÁ THÊM</span>
+            <h3>Tour tương tự bạn có thể thích</h3>
+          </div>
+          <a href="tours.html" class="link-arrow text-primary fw-bold">Xem tất cả <i class="bi bi-arrow-right"></i></a>
+        </div>
+        <div class="row g-4" id="related-tours-row"></div>
+      </section>
+    </div>
+  </main>
+
+  <div id="site-footer-container"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    let currentTour = null;
+    let selectedDeparture = null;
+    let widgetGuests = { adults: 2, children: 0 };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('site-header-container').innerHTML = GTApp.getHeaderHTML('tours');
+      document.getElementById('site-footer-container').innerHTML = GTApp.getFooterHTML();
+      GTApp.updateHeaderUser();
+      GTApp.updateCartBadge();
+      GTApp.setupSearchOverlay();
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const tourId = urlParams.get('id') || '1';
+      currentTour = GTStore.getTourById(tourId) || GTStore.getTours()[0];
+
+      renderTourDetail(currentTour);
+    });
+
+    function renderTourDetail(t) {
+      document.title = `${t.name} - GoTravel`;
+      document.getElementById('tour-crumb-title').textContent = t.name;
+      document.getElementById('tour-title').textContent = t.name;
+      document.getElementById('tour-destination').textContent = `${t.destination} • ${t.region || 'Việt Nam'}`;
+      document.getElementById('tour-rating').textContent = t.rating || '4.8';
+      document.getElementById('tour-reviews').textContent = t.reviews || '320';
+      document.getElementById('tour-duration').textContent = `${t.days} ngày ${t.nights} đêm`;
+      document.getElementById('pill-duration').textContent = `${t.days} ngày ${t.nights} đêm`;
+      document.getElementById('tour-depart').textContent = t.departFrom || 'Hà Nội';
+      document.getElementById('tour-badge').textContent = t.badge || 'Nổi bật';
+      document.getElementById('tour-overview').textContent = t.overview || '';
+
+      // Favorite button state
+      const isFav = GTStore.isFavorite(t.id);
+      const favBtn = document.getElementById('btn-fav-detail');
+      if (isFav) {
+        favBtn.classList.replace('btn-outline-danger', 'btn-danger');
+        favBtn.innerHTML = '<i class="bi bi-heart-fill me-1"></i>Đã thích';
+      }
+
+      // Widget prices
+      document.getElementById('widget-price').textContent = GTApp.formatVND(t.price);
+      if (t.oldPrice) {
+        document.getElementById('widget-old-price').textContent = GTApp.formatVND(t.oldPrice);
+        const pct = Math.round(((t.oldPrice - t.price) / t.oldPrice) * 100);
+        document.getElementById('widget-discount-badge').textContent = `-${pct}%`;
+      } else {
+        document.getElementById('widget-old-price').style.display = 'none';
+        document.getElementById('widget-discount-badge').style.display = 'none';
+      }
+
+      // Gallery
+      const imgs = t.images && t.images.length > 0 ? t.images : [FALLBACK_IMG, PHOTOS.beach1, PHOTOS.mountain1, PHOTOS.lake, PHOTOS.forest];
+      const gContainer = document.getElementById('gallery-container');
+      gContainer.innerHTML = `
+        <img class="g-main" src="${imgs[0]}" alt="${t.name}">
+        <img src="${imgs[1] || imgs[0]}" alt="${t.name}">
+        <img src="${imgs[2] || imgs[0]}" alt="${t.name}">
+        <img class="g-hide-md" src="${imgs[3] || imgs[0]}" alt="${t.name}">
+        <img class="g-hide-md" src="${imgs[4] || imgs[0]}" alt="${t.name}">
+      `;
+
+      // Timeline
+      const tl = document.getElementById('itinerary-timeline');
+      if (t.itinerary && t.itinerary.length) {
+        tl.innerHTML = t.itinerary.map((item, idx) => `
+          <div class="tl-item">
+            <span class="tl-day">NGÀY 0${idx + 1}</span>
+            <h6 class="text-navy">${item.title}</h6>
+            <p>${item.desc}</p>
+          </div>
+        `).join('');
+      }
+
+      // Includes & Excludes
+      const incList = document.getElementById('includes-list');
+      incList.innerHTML = DEFAULT_INCLUDES.map(i => `<li>${i}</li>`).join('');
+      const excList = document.getElementById('excludes-list');
+      excList.innerHTML = DEFAULT_EXCLUDES.map(i => `<li>${i}</li>`).join('');
+      const trmList = document.getElementById('terms-list');
+      trmList.innerHTML = DEFAULT_TERMS.map(i => `<li>${i}</li>`).join('');
+
+      // Reviews
+      const rContainer = document.getElementById('reviews-list');
+      rContainer.innerHTML = REVIEWS.map(r => `
+        <div class="review-item">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <strong class="text-navy">${r.name}</strong>
+            <small class="text-muted">${GTApp.formatDateVN(r.date)}</small>
+          </div>
+          <div class="stars mb-2">
+            ${'<i class="bi bi-star-fill text-warning"></i>'.repeat(r.rating)}
+          </div>
+          <p class="text-muted small m-0">${r.text}</p>
+        </div>
+      `).join('');
+
+      // Departures
+      const deps = getDepartures(t);
+      const depContainer = document.getElementById('departure-options');
+      depContainer.innerHTML = deps.map((d, i) => {
+        const isSelected = i === 0;
+        if (isSelected) selectedDeparture = d;
+        return `
+          <div class="date-option ${isSelected ? 'selected' : ''}" onclick="selectDeparture(this, '${d.date}', '${d.returnDate}', ${d.seatsLeft})">
+            <div>
+              <strong class="d-block small text-navy">${GTApp.formatDateVN(d.date)}</strong>
+              <small class="text-muted">Về: ${GTApp.formatDateVN(d.returnDate)}</small>
+            </div>
+            <span class="badge ${d.seatsLeft > 5 ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'} rounded-pill">
+              Còn ${d.seatsLeft} chỗ
+            </span>
+          </div>
+        `;
+      }).join('');
+
+      recalculatePrice();
+
+      // Related tours (same region or destination)
+      const allTours = GTStore.getTours();
+      const related = allTours.filter(x => x.id !== t.id).slice(0, 4);
+      document.getElementById('related-tours-row').innerHTML = related.map(x => GTApp.createTourCardHTML(x)).join('');
+    }
+
+    function selectDeparture(el, date, returnDate, seatsLeft) {
+      document.querySelectorAll('.date-option').forEach(d => d.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedDeparture = { date, returnDate, seatsLeft };
+    }
+
+    function widgetGuestChange(type, delta) {
+      if (type === 'adults') {
+        widgetGuests.adults = Math.max(1, widgetGuests.adults + delta);
+        document.getElementById('widget-adults').textContent = widgetGuests.adults;
+      } else {
+        widgetGuests.children = Math.max(0, widgetGuests.children + delta);
+        document.getElementById('widget-children').textContent = widgetGuests.children;
+      }
+      recalculatePrice();
+    }
+
+    function recalculatePrice() {
+      if (!currentTour) return;
+      const units = widgetGuests.adults + (widgetGuests.children * 0.5);
+      const total = Math.round(units * currentTour.price);
+      const subtotal = Math.round(units * (currentTour.oldPrice || currentTour.price));
+      const discount = subtotal - total;
+
+      document.getElementById('calc-guests-label').textContent = `${widgetGuests.adults} lớn, ${widgetGuests.children} trẻ`;
+      document.getElementById('calc-subtotal').textContent = GTApp.formatVND(subtotal);
+      document.getElementById('calc-discount').textContent = `-${GTApp.formatVND(discount)}`;
+      document.getElementById('calc-total').textContent = GTApp.formatVND(total);
+    }
+
+    function handleProceedBooking(e) {
+      e.preventDefault();
+      if (!selectedDeparture) {
+        GTApp.toast('Vui lòng chọn ngày khởi hành', 'warning');
+        return;
+      }
+      const params = new URLSearchParams({
+        tourId: currentTour.id,
+        date: selectedDeparture.date,
+        returnDate: selectedDeparture.returnDate,
+        adults: widgetGuests.adults,
+        children: widgetGuests.children
+      });
+      window.location.href = `booking.html?${params.toString()}`;
+    }
+
+    function handleAddToCart() {
+      if (!selectedDeparture) {
+        GTApp.toast('Vui lòng chọn ngày khởi hành', 'warning');
+        return;
+      }
+      GTStore.addToCart({
+        tourId: currentTour.id,
+        name: currentTour.name,
+        image: currentTour.images[0],
+        price: currentTour.price,
+        oldPrice: currentTour.oldPrice,
+        date: selectedDeparture.date,
+        returnDate: selectedDeparture.returnDate,
+        adults: widgetGuests.adults,
+        children: widgetGuests.children,
+        departFrom: currentTour.departFrom
+      });
+      GTApp.toast('Đã thêm tour vào giỏ hàng thành công!', 'success');
+    }
+
+    function toggleDetailFav() {
+      const active = GTStore.toggleFavorite(currentTour.id);
+      const favBtn = document.getElementById('btn-fav-detail');
+      if (active) {
+        favBtn.classList.replace('btn-outline-danger', 'btn-danger');
+        favBtn.innerHTML = '<i class="bi bi-heart-fill me-1"></i>Đã thích';
+      } else {
+        favBtn.classList.replace('btn-danger', 'btn-outline-danger');
+        favBtn.innerHTML = '<i class="bi bi-heart me-1"></i>Yêu thích';
+      }
+    }
+
+    function copyTourLink() {
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        GTApp.toast('Đã sao chép link tour vào bộ nhớ tạm!', 'success');
+      }).catch(() => {
+        GTApp.toast('Không thể sao chép liên kết', 'warning');
+      });
+    }
+
+    function openReviewPrompt() {
+      const name = prompt('Nhập tên của bạn:');
+      if (!name) return;
+      const text = prompt('Nhập cảm nhận của bạn về chuyến đi:');
+      if (!text) return;
+      const rContainer = document.getElementById('reviews-list');
+      const newReview = document.createElement('div');
+      newReview.className = 'review-item';
+      newReview.innerHTML = `
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <strong class="text-navy">${name} (Vừa đánh giá)</strong>
+          <small class="text-muted">Hôm nay</small>
+        </div>
+        <div class="stars mb-2">
+          ${'<i class="bi bi-star-fill text-warning"></i>'.repeat(5)}
+        </div>
+        <p class="text-muted small m-0">${text}</p>
+      `;
+      rContainer.prepend(newReview);
+      GTApp.toast('Cảm ơn bạn đã gửi đánh giá trải nghiệm!', 'success');
+    }
+  </script>
+</body>
+</html>
