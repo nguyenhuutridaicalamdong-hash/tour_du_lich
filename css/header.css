@@ -1,0 +1,193 @@
+/* =========================================================
+   GoTravel - Header, Navigation & Search Overlay
+   ========================================================= */
+
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--header-h);
+  background: rgba(255,255,255,.97);
+  backdrop-filter: blur(10px);
+  z-index: 1030;
+  transition: box-shadow var(--t);
+  border-bottom: 1px solid transparent;
+}
+.site-header.scrolled {
+  box-shadow: 0 4px 20px rgba(18,52,91,.08);
+  border-bottom-color: var(--border);
+}
+.site-header .navbar {
+  height: var(--header-h);
+  padding: 0;
+}
+
+/* Brand */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  text-decoration: none;
+}
+.brand-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, var(--primary), #4fb0ff);
+  color: #fff;
+  font-size: 1.3rem;
+  box-shadow: 0 6px 14px rgba(22,136,232,.35);
+  transform: rotate(-8deg);
+}
+.brand-icon i { transform: rotate(8deg); }
+.brand-name {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 1.35rem;
+  color: var(--navy);
+  line-height: 1;
+}
+.brand-name span { color: var(--primary); }
+.brand-slogan {
+  font-size: .7rem;
+  color: var(--muted);
+  margin-top: 3px;
+  letter-spacing: .2px;
+}
+
+/* Nav Links */
+.site-header .nav-link {
+  font-weight: 500;
+  color: var(--text);
+  padding: .5rem .95rem !important;
+  border-radius: 10px;
+  position: relative;
+}
+.site-header .nav-link:hover { color: var(--primary); }
+.site-header .nav-link.active {
+  color: var(--primary);
+  font-weight: 600;
+}
+.site-header .nav-link.active::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -2px;
+  width: 22px;
+  height: 3px;
+  border-radius: 3px;
+  background: var(--primary);
+  transform: translateX(-50%);
+}
+
+/* Icons & Buttons */
+.icon-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: inline-grid;
+  place-items: center;
+  position: relative;
+  color: var(--navy);
+  background: transparent;
+  border: none;
+  font-size: 1.15rem;
+  transition: all var(--t);
+}
+.icon-btn:hover {
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+.cart-badge {
+  position: absolute;
+  top: 4px;
+  right: 3px;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  padding: 0 5px;
+  background: var(--orange);
+  color: #fff;
+  font-size: .68rem;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+}
+
+/* User Profile Chip */
+.user-chip {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  border: 1.5px solid var(--border);
+  border-radius: 30px;
+  padding: .3rem .8rem .3rem .3rem;
+  background: #fff;
+}
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: .8rem;
+  background: linear-gradient(135deg, var(--primary), #4fb0ff);
+  color: #fff;
+  flex-shrink: 0;
+}
+.dropdown-menu {
+  border: none;
+  border-radius: 14px;
+  box-shadow: var(--shadow-lg);
+  padding: .5rem;
+}
+.dropdown-item {
+  border-radius: 8px;
+  padding: .55rem .8rem;
+  font-size: .92rem;
+}
+.dropdown-item:active { background: var(--primary); }
+
+/* Search overlay */
+.search-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(18,52,91,.55);
+  backdrop-filter: blur(4px);
+  z-index: 1060;
+  display: none;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 12vh;
+}
+.search-overlay.show {
+  display: flex;
+  animation: fadeIn .2s ease;
+}
+.search-overlay-box {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  width: min(640px, 92vw);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Responsive Header */
+@media (max-width: 991.98px) {
+  .site-header .navbar-collapse {
+    position: absolute;
+    top: var(--header-h);
+    left: 0;
+    right: 0;
+    background: #fff;
+    padding: 1rem 1.25rem 1.25rem;
+    box-shadow: 0 12px 24px rgba(18,52,91,.1);
+    border-top: 1px solid var(--border);
+  }
+  .site-header .nav-link.active::after { display: none; }
+  .site-header .nav-link.active { background: var(--primary-soft); }
+}

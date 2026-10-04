@@ -1,0 +1,396 @@
+/* =========================================================
+   GoTravel - Booking, Payment, Profile & Auth
+   ========================================================= */
+
+/* Page Banner */
+.page-banner {
+  position: relative;
+  padding: 70px 0 60px;
+  color: #fff;
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+}
+.page-banner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(10,32,60,.85), rgba(10,32,60,.45));
+}
+.page-banner .container {
+  position: relative;
+  z-index: 1;
+}
+.page-banner h1 {
+  color: #fff;
+  font-weight: 700;
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+}
+.page-banner .breadcrumb-item, .page-banner .breadcrumb-item a {
+  color: rgba(255,255,255,.85);
+}
+.page-banner .breadcrumb-item.active { color: #fff; }
+.page-banner .breadcrumb-item + .breadcrumb-item::before {
+  color: rgba(255,255,255,.6);
+}
+
+/* 4-Step Progress Indicator */
+.steps {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  max-width: 760px;
+  margin: 0 auto;
+}
+.steps::before {
+  content: '';
+  position: absolute;
+  top: 22px;
+  left: 8%;
+  right: 8%;
+  height: 3px;
+  background: var(--border);
+  z-index: 0;
+}
+.steps .progress-line {
+  position: absolute;
+  top: 22px;
+  left: 8%;
+  height: 3px;
+  background: var(--primary);
+  z-index: 1;
+  transition: width .4s ease;
+}
+.step {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  flex: 1;
+}
+.step-dot {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  margin: 0 auto .5rem;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  background: #fff;
+  border: 3px solid var(--border);
+  color: var(--muted);
+  transition: all var(--t);
+  font-family: 'Poppins';
+}
+.step.active .step-dot {
+  border-color: var(--primary);
+  color: var(--primary);
+  box-shadow: 0 0 0 6px rgba(22,136,232,.12);
+}
+.step.done .step-dot {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+.step-label {
+  font-size: .85rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+.step.active .step-label, .step.done .step-label { color: var(--navy); }
+.step-panel { animation: fadeUp .3s ease; }
+
+/* Order Summary & Mini Tour */
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: .45rem 0;
+  font-size: .93rem;
+}
+.summary-row span:first-child { color: var(--muted); }
+.summary-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  margin-top: .5rem;
+  border-top: 1px dashed var(--border);
+}
+.summary-total strong {
+  color: var(--orange);
+  font-size: 1.5rem;
+  font-family: 'Poppins';
+}
+.mini-tour {
+  display: flex;
+  gap: .9rem;
+  align-items: center;
+}
+.mini-tour img {
+  width: 92px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+.date-option {
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: .75rem 1rem;
+  cursor: pointer;
+  transition: all var(--t);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+}
+.date-option:hover { border-color: var(--primary); }
+.date-option.selected {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+}
+.date-option.disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+/* Payment Methods */
+.pay-method {
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  padding: 1rem 1.1rem;
+  cursor: pointer;
+  transition: all var(--t);
+  display: flex;
+  align-items: center;
+  gap: .9rem;
+  background: #fff;
+}
+.pay-method:hover { border-color: var(--primary); }
+.pay-method.selected {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+  box-shadow: 0 0 0 4px rgba(22,136,232,.08);
+}
+.pay-method .pm-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  font-size: 1.3rem;
+}
+.pay-detail {
+  background: var(--bg);
+  border-radius: 14px;
+  padding: 1rem;
+  margin-top: .75rem;
+  animation: fadeUp .25s ease;
+}
+.success-icon {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  margin: 0 auto;
+  display: grid;
+  place-items: center;
+  font-size: 3rem;
+  background: #e5f7ec;
+  color: var(--success);
+  animation: pop .5s ease;
+}
+
+/* Status Badges */
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  padding: .3rem .7rem;
+  border-radius: 30px;
+  font-size: .78rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.status::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.st-pending   { background: #fff6e0; color: #c98200; }
+.st-paid      { background: #e3f1fd; color: #1688E8; }
+.st-confirmed { background: #f0eafe; color: #7c4dff; }
+.st-completed { background: #e5f7ec; color: #16a34a; }
+.st-cancelled { background: #fde8e8; color: #e5484d; }
+
+/* Auth Pages (Login & Register) */
+.auth-wrap {
+  min-height: calc(100vh - var(--header-h));
+  display: flex;
+  align-items: center;
+  padding: 40px 0;
+}
+.auth-card {
+  background: #fff;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+.auth-side {
+  position: relative;
+  min-height: 100%;
+  background-size: cover;
+  background-position: center;
+  color: #fff;
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.auth-side::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(10,32,60,.1), rgba(10,32,60,.85));
+}
+.auth-side > * { position: relative; }
+.auth-side h3 { color: #fff; }
+.auth-form { padding: 2.5rem; }
+.demo-box {
+  background: var(--primary-soft);
+  border-radius: 14px;
+  padding: .9rem 1rem;
+  font-size: .86rem;
+}
+
+/* User Profile & Tables */
+.profile-nav .list-group-item {
+  border: none;
+  border-radius: 12px !important;
+  margin-bottom: 4px;
+  padding: .8rem 1rem;
+  font-weight: 500;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+  cursor: pointer;
+  background: transparent;
+}
+.profile-nav .list-group-item:hover {
+  background: var(--bg);
+  color: var(--primary);
+}
+.profile-nav .list-group-item.active {
+  background: var(--primary);
+  color: #fff;
+}
+.filter-pills .btn {
+  border-radius: 30px;
+  padding: .4rem 1rem;
+  font-size: .85rem;
+  border: 1.5px solid var(--border);
+  background: #fff;
+  color: var(--text);
+  font-weight: 600;
+}
+.filter-pills .btn.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+.table-gt { margin: 0; }
+.table-gt thead th {
+  background: var(--bg);
+  color: var(--muted);
+  font-size: .78rem;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+  font-weight: 600;
+  border: none;
+  padding: .9rem 1rem;
+  white-space: nowrap;
+}
+.table-gt tbody td {
+  padding: .95rem 1rem;
+  vertical-align: middle;
+  border-color: var(--border);
+  font-size: .92rem;
+}
+.table-gt tbody tr:hover { background: #fafcfe; }
+
+/* About & Contact Cards */
+.value-card {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  padding: 1.8rem;
+  height: 100%;
+  border: 1px solid var(--border);
+  transition: all var(--t);
+}
+.value-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+  border-color: transparent;
+}
+.value-card .usp-icon { margin-bottom: 1rem; }
+.stat-num {
+  font-family: 'Poppins';
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+.team-card {
+  text-align: center;
+  background: #fff;
+  border-radius: var(--radius-lg);
+  padding: 1.8rem 1rem;
+  border: 1px solid var(--border);
+  transition: all var(--t);
+}
+.team-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow);
+}
+.team-avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  margin: 0 auto 1rem;
+  display: grid;
+  place-items: center;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #fff;
+  font-family: 'Poppins';
+}
+.about-img {
+  border-radius: 24px;
+  width: 100%;
+  height: 420px;
+  object-fit: cover;
+  box-shadow: var(--shadow-lg);
+}
+.contact-item {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  padding: 1.2rem;
+  background: #fff;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+.map-frame {
+  width: 100%;
+  height: 320px;
+  border: 0;
+  border-radius: var(--radius-lg);
+}
+
+/* Booking Responsive */
+@media (max-width: 575.98px) {
+  .auth-form { padding: 1.6rem; }
+  .step-label { font-size: .72rem; }
+  .step-dot { width: 38px; height: 38px; }
+  .steps::before, .steps .progress-line { top: 18px; }
+}
