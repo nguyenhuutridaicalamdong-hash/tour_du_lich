@@ -16,3 +16,8 @@ $RECYCLE.BIN/
 # Logs and databases
 *.log
 *.tmp
+*.db
+
+# .NET Build artifacts
+[Bb]in/
+[Oo]bj/

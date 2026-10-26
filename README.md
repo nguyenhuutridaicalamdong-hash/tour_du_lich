@@ -28,19 +28,29 @@ GoTravel là website bán hàng, đặt tour du lịch và thanh toán trực tu
 
 ## 🛠 Công nghệ sử dụng
 
-- **HTML5 & CSS3 thuần:** Thiết kế giao diện hiện đại, responsive mượt mà trên Desktop, Tablet và Mobile.
-- **Bootstrap 5.3 & Bootstrap Icons:** Hệ thống grid và icon trực quan.
-- **JavaScript thuần (Vanilla JS):** Quản trị dữ liệu local (`localStorage`), tìm kiếm, lọc, tính giá tự động, xác thực dữ liệu.
-- **Google Fonts:** Poppins, Inter, Dancing Script.
+- **Frontend:** HTML5, CSS3 module hóa, Bootstrap 5.3, Bootstrap Icons, JavaScript thuần (Vanilla JS).
+- **Backend:** ASP.NET Core Web API (.NET 10), Entity Framework Core, **Microsoft SQL Server (`.\SQLEXPRESS`)** - Database `GoTravelDb` (tự động tạo bảng & seed dữ liệu mẫu).
+- **Cổng thanh toán:** Tích hợp cổng thanh toán trực tuyến **VNPay Sandbox** (mã hóa bảo mật HMAC-SHA512).
 
 ## 💻 Cách chạy dự án
 
-1. Clone repository về máy:
-   ```bash
-   git clone https://github.com/nguyenhuutridaicalamdong-hash/thanh_toan_tour_du_lich.git
-   ```
-2. Mở file `index.html` trực tiếp trên trình duyệt hoặc chạy qua Live Server trong VS Code.
-3. Tài khoản demo:
-   - **Khách hàng:** `user@gotravel.vn` / Mật khẩu: `123456`
-   - **Quản trị viên:** `admin@gotravel.vn` / Mật khẩu: `admin123`
->>>>>>> aeed343 (feat: Hoan thien he thong website GoTravel - dat tour va thanh toan truc tuyen)
+### 1. Khởi chạy Backend ASP.NET Core Web API:
+```bash
+cd backend
+dotnet run --urls="http://localhost:5000"
+```
+- API Base URL: `http://localhost:5000`
+- Cơ sở dữ liệu: Tự động khởi tạo database **`GoTravelDb`** trên Microsoft SQL Server instance `.\SQLEXPRESS` (Windows Authentication).
+- Tích hợp VNPay Sandbox: endpoint sinh URL thanh toán `/api/payment/vnpay-url` và nhận phản hồi `/api/payment/vnpay-return`.
+
+### 2. Khởi chạy Frontend:
+Mở file `index.html` trực tiếp trên trình duyệt, hoặc chạy qua PowerShell server:
+```powershell
+powershell -ExecutionPolicy Bypass -File .\server.ps1
+```
+Truy cập: `http://localhost:8080`
+
+### 3. Tài khoản demo:
+- **Khách hàng:** `user@gotravel.vn` / Mật khẩu: `123456`
+- **Quản trị viên:** `admin@gotravel.vn` / Mật khẩu: `admin123`
+
