@@ -10,7 +10,7 @@ let childrenCount = 0;
 let appliedCoupon = null;
 let currentStep = 1;
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('site-header-container').innerHTML = GTApp.getHeaderHTML('tours');
   document.getElementById('site-footer-container').innerHTML = GTApp.getFooterHTML();
   GTApp.updateHeaderUser();
@@ -20,7 +20,17 @@ document.addEventListener('DOMContentLoaded', () => {
   // Parse parameters
   const urlParams = new URLSearchParams(window.location.search);
   const tourId = urlParams.get('tourId') || '1';
-  bookingTour = GTStore.getTourById(tourId) || GTStore.getTours()[0];
+
+  // Try fetching tour directly from backend API if available
+  if (typeof GTApi !== 'undefined') {
+    const res = await GTApi.getTourById(tourId);
+    if (res.success && res.data) {
+      bookingTour = res.data;
+    }
+  }
+  if (!bookingTour) {
+    bookingTour = GTStore.getTourById(tourId) || GTStore.getTours()[0];
+  }
 
   if (urlParams.get('adults')) adultsCount = Math.max(1, parseInt(urlParams.get('adults')));
   if (urlParams.get('children')) childrenCount = Math.max(0, parseInt(urlParams.get('children')));
@@ -32,9 +42,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function initBookingData() {
   const t = bookingTour;
+  const tourCover = (t.images && t.images[0]) || (t.imagesJson ? JSON.parse(t.imagesJson || '[]')[0] : FALLBACK_IMG) || FALLBACK_IMG;
+
   // Step 1 UI
-  document.getElementById('step1-tour-img').src = t.images[0] || FALLBACK_IMG;
-  document.getElementById('sidebar-tour-img').src = t.images[0] || FALLBACK_IMG;
+  document.getElementById('step1-tour-img').src = tourCover;
+  document.getElementById('sidebar-tour-img').src = tourCover;
   document.getElementById('step1-tour-name').textContent = t.name;
   document.getElementById('sidebar-tour-name').textContent = t.name;
   document.getElementById('step1-tour-dur').textContent = `${t.days} ngày ${t.nights} đêm`;
@@ -162,10 +174,12 @@ function recalcSummary() {
 
   let couponDiscountAmount = 0;
   if (appliedCoupon) {
+    const val = appliedCoupon.value;
+    const max = appliedCoupon.maxDiscount || appliedCoupon.max || 2000000;
     if (appliedCoupon.type === 'percent') {
-      couponDiscountAmount = Math.min(appliedCoupon.max, Math.round(currentSubtotal * (appliedCoupon.value / 100)));
+      couponDiscountAmount = Math.min(max, Math.round(currentSubtotal * (val / 100)));
     } else {
-      couponDiscountAmount = Math.min(currentSubtotal, appliedCoupon.value);
+      couponDiscountAmount = Math.min(currentSubtotal, val);
     }
     document.getElementById('coupon-discount-row').style.display = 'flex';
     document.getElementById('applied-coupon-code').textContent = appliedCoupon.code;
@@ -178,7 +192,7 @@ function recalcSummary() {
   document.getElementById('sidebar-total').textContent = GTApp.formatVND(finalTotal);
 }
 
-function applyCoupon() {
+async function applyCoupon() {
   const inp = document.getElementById('coupon-input');
   const code = inp.value.trim().toUpperCase();
   const feedback = document.getElementById('coupon-feedback');
@@ -186,7 +200,16 @@ function applyCoupon() {
     feedback.innerHTML = '<span class="text-danger">Vui lòng nhập mã giảm giá</span>';
     return;
   }
-  const c = GTStore.findCoupon(code);
+
+  let c = null;
+  if (typeof GTApi !== 'undefined') {
+    const res = await GTApi.getVoucherByCode(code);
+    if (res.success && res.data) c = res.data;
+  }
+  if (!c) {
+    c = GTStore.findCoupon(code);
+  }
+
   if (!c) {
     feedback.innerHTML = '<span class="text-danger">Mã không hợp lệ hoặc đã hết hạn</span>';
     appliedCoupon = null;
@@ -194,7 +217,7 @@ function applyCoupon() {
     return;
   }
   appliedCoupon = c;
-  feedback.innerHTML = `<span class="text-success"><i class="bi bi-check-circle me-1"></i>Áp dụng mã <strong>${c.code}</strong> thành công! ${c.desc}</span>`;
+  feedback.innerHTML = `<span class="text-success"><i class="bi bi-check-circle me-1"></i>Áp dụng mã <strong>${c.code}</strong> thành công! ${c.description || c.desc || ''}</span>`;
   GTApp.toast(`Đã áp dụng mã giảm giá: ${c.code}`, 'success');
   recalcSummary();
 }
@@ -282,7 +305,7 @@ function populateStep3Review() {
   document.getElementById('review-passenger-list').innerHTML = passNames.join('');
 }
 
-function createOrderAndProceed() {
+async function createOrderAndProceed() {
   const agreed = document.getElementById('agree-terms').checked;
   if (!agreed) {
     GTApp.toast('Vui lòng đồng ý với điều khoản dịch vụ để tiếp tục', 'warning');
@@ -290,6 +313,7 @@ function createOrderAndProceed() {
   }
 
   const t = bookingTour;
+  const tourCover = (t.images && t.images[0]) || (t.imagesJson ? JSON.parse(t.imagesJson || '[]')[0] : FALLBACK_IMG) || FALLBACK_IMG;
   const units = adultsCount + (childrenCount * 0.5);
   const subtotal = Math.round(units * (t.oldPrice || t.price));
   const currentSubtotal = Math.round(units * t.price);
@@ -297,10 +321,12 @@ function createOrderAndProceed() {
 
   let couponDiscount = 0;
   if (appliedCoupon) {
+    const val = appliedCoupon.value;
+    const max = appliedCoupon.maxDiscount || appliedCoupon.max || 2000000;
     if (appliedCoupon.type === 'percent') {
-      couponDiscount = Math.min(appliedCoupon.max, Math.round(currentSubtotal * (appliedCoupon.value / 100)));
+      couponDiscount = Math.min(max, Math.round(currentSubtotal * (val / 100)));
     } else {
-      couponDiscount = Math.min(currentSubtotal, appliedCoupon.value);
+      couponDiscount = Math.min(currentSubtotal, val);
     }
   }
   const total = Math.max(0, currentSubtotal - couponDiscount);
@@ -312,7 +338,7 @@ function createOrderAndProceed() {
     code,
     tourId: t.id,
     tourName: t.name,
-    image: t.images[0] || FALLBACK_IMG,
+    image: tourCover,
     date: selectedDate,
     returnDate: selectedReturnDate,
     adults: adultsCount,
@@ -336,8 +362,8 @@ function createOrderAndProceed() {
     userEmail: document.getElementById('cust-email').value.trim()
   };
 
-  GTStore.saveOrder(order);
-  GTApp.toast('Đã lưu thông tin đơn hàng! Chuyển sang thanh toán...', 'success');
+  await GTStore.saveOrder(order);
+  GTApp.toast('Đã lưu thông tin đơn hàng vào SQL Server! Chuyển sang thanh toán...', 'success');
 
   // Navigate to Payment step
   setTimeout(() => {

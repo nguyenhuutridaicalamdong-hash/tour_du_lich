@@ -61,6 +61,10 @@ namespace backend.Controllers
         public async Task<IActionResult> CreateTour([FromBody] Tour tour)
         {
             tour.CreatedAt = DateTime.UtcNow;
+            if (tour.Images != null && tour.Images.Count > 0 && (string.IsNullOrWhiteSpace(tour.ImagesJson) || tour.ImagesJson == "[]"))
+            {
+                tour.ImagesJson = System.Text.Json.JsonSerializer.Serialize(tour.Images);
+            }
             _db.Tours.Add(tour);
             await _db.SaveChangesAsync();
             return CreatedAtAction(nameof(GetTourById), new { id = tour.Id }, tour);
@@ -84,7 +88,14 @@ namespace backend.Controllers
             tour.Badge = updated.Badge;
             tour.Seats = updated.Seats;
             tour.Status = updated.Status;
-            tour.ImagesJson = updated.ImagesJson;
+            if (updated.Images != null && updated.Images.Count > 0)
+            {
+                tour.ImagesJson = System.Text.Json.JsonSerializer.Serialize(updated.Images);
+            }
+            else if (!string.IsNullOrWhiteSpace(updated.ImagesJson))
+            {
+                tour.ImagesJson = updated.ImagesJson;
+            }
             tour.Overview = updated.Overview;
 
             await _db.SaveChangesAsync();

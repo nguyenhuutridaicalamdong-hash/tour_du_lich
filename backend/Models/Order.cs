@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json;
 
 namespace backend.Models
 {
@@ -30,5 +33,39 @@ namespace backend.Models
         public DateTime? PaidAt { get; set; }
         public string? VnPayTransactionNo { get; set; }
         public string? VnPayBankCode { get; set; }
+
+        [NotMapped]
+        public string Date
+        {
+            get => DepartureDate;
+            set => DepartureDate = value;
+        }
+
+        [NotMapped]
+        public object Customer
+        {
+            get => new
+            {
+                name = CustomerName,
+                phone = CustomerPhone,
+                email = CustomerEmail,
+                address = CustomerAddress
+            };
+        }
+
+        [NotMapped]
+        public List<string> Passengers
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(PassengersJson)) return new List<string>();
+                try { return JsonSerializer.Deserialize<List<string>>(PassengersJson) ?? new List<string>(); }
+                catch { return new List<string>(); }
+            }
+            set
+            {
+                PassengersJson = JsonSerializer.Serialize(value ?? new List<string>());
+            }
+        }
     }
 }

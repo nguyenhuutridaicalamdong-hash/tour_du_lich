@@ -53,6 +53,33 @@ const GTStore = {
         localStorage.setItem(this.KEYS.AUTH, JSON.stringify(DEFAULT_USERS[0]));
       }
     }
+
+    // Auto sync from ASP.NET Core & SQL Server in background
+    this.syncWithBackend();
+  },
+
+  async syncWithBackend() {
+    if (typeof GTApi === 'undefined') return;
+    try {
+      const tourRes = await GTApi.getTours();
+      if (tourRes.success && Array.isArray(tourRes.data) && tourRes.data.length > 0) {
+        localStorage.setItem(this.KEYS.TOURS, JSON.stringify(tourRes.data));
+      }
+      const orderRes = await GTApi.getOrders();
+      if (orderRes.success && Array.isArray(orderRes.data)) {
+        localStorage.setItem(this.KEYS.ORDERS, JSON.stringify(orderRes.data));
+      }
+      const voucherRes = await GTApi.getVouchers();
+      if (voucherRes.success && Array.isArray(voucherRes.data)) {
+        localStorage.setItem(this.KEYS.COUPONS, JSON.stringify(voucherRes.data));
+      }
+      const userRes = await GTApi.getUsers();
+      if (userRes.success && Array.isArray(userRes.data)) {
+        localStorage.setItem(this.KEYS.USERS, JSON.stringify(userRes.data));
+      }
+    } catch (err) {
+      console.info('[GTStore] Running in offline mode:', err);
+    }
   },
 
   /* Tours */
@@ -68,23 +95,38 @@ const GTStore = {
     const tours = this.getTours();
     return tours.find(t => String(t.id) === String(id));
   },
-  saveTour(tour) {
+  async saveTour(tour) {
     const tours = this.getTours();
     if (tour.id) {
       const idx = tours.findIndex(t => String(t.id) === String(tour.id));
       if (idx !== -1) tours[idx] = { ...tours[idx], ...tour };
       else tours.unshift(tour);
+      if (typeof GTApi !== 'undefined') {
+        GTApi.updateTour(tour.id, tour);
+      }
     } else {
-      tour.id = Date.now();
       tour.createdAt = new Date().toISOString().slice(0, 10);
+      if (typeof GTApi !== 'undefined') {
+        const res = await GTApi.createTour(tour);
+        if (res.success && res.data && res.data.id) {
+          tour.id = res.data.id;
+        } else {
+          tour.id = Date.now();
+        }
+      } else {
+        tour.id = Date.now();
+      }
       tours.unshift(tour);
     }
     localStorage.setItem(this.KEYS.TOURS, JSON.stringify(tours));
     return tour;
   },
-  deleteTour(id) {
+  async deleteTour(id) {
     const tours = this.getTours().filter(t => String(t.id) !== String(id));
     localStorage.setItem(this.KEYS.TOURS, JSON.stringify(tours));
+    if (typeof GTApi !== 'undefined') {
+      await GTApi.deleteTour(id);
+    }
   },
 
   /* Orders */
@@ -99,7 +141,7 @@ const GTStore = {
   getOrderByCode(code) {
     return this.getOrders().find(o => o.code === code);
   },
-  saveOrder(order) {
+  async saveOrder(order) {
     const orders = this.getOrders();
     const idx = orders.findIndex(o => o.code === order.code);
     if (idx !== -1) {
@@ -108,14 +150,21 @@ const GTStore = {
       orders.unshift(order);
     }
     localStorage.setItem(this.KEYS.ORDERS, JSON.stringify(orders));
+
+    if (typeof GTApi !== 'undefined') {
+      await GTApi.createOrder(order);
+    }
     return order;
   },
-  updateOrderStatus(code, status) {
+  async updateOrderStatus(code, status) {
     const orders = this.getOrders();
     const o = orders.find(x => x.code === code);
     if (o) {
       o.status = status;
       localStorage.setItem(this.KEYS.ORDERS, JSON.stringify(orders));
+    }
+    if (typeof GTApi !== 'undefined') {
+      await GTApi.updateOrderStatus(code, status);
     }
     return o;
   },
@@ -129,21 +178,28 @@ const GTStore = {
       return DEFAULT_COUPONS;
     }
   },
-  saveCoupon(coupon) {
+  async saveCoupon(coupon) {
     const list = this.getCoupons();
     const idx = list.findIndex(c => c.code === coupon.code);
     if (idx !== -1) list[idx] = coupon;
     else list.push(coupon);
     localStorage.setItem(this.KEYS.COUPONS, JSON.stringify(list));
+
+    if (typeof GTApi !== 'undefined') {
+      await GTApi.createVoucher(coupon);
+    }
   },
-  deleteCoupon(code) {
+  async deleteCoupon(code) {
     const list = this.getCoupons().filter(c => c.code !== code);
     localStorage.setItem(this.KEYS.COUPONS, JSON.stringify(list));
+    if (typeof GTApi !== 'undefined') {
+      await GTApi.deleteVoucher(code);
+    }
   },
   findCoupon(code) {
     if (!code) return null;
     const clean = code.trim().toUpperCase();
-    return this.getCoupons().find(c => c.code.toUpperCase() === clean && c.active);
+    return this.getCoupons().find(c => c.code.toUpperCase() === clean && (c.active || c.isActive));
   },
 
   /* Cart */
@@ -234,14 +290,34 @@ const GTStore = {
     }
     GTApp.updateHeaderUser();
   },
+  async loginAsync(email, password) {
+    if (typeof GTApi !== 'undefined') {
+      const res = await GTApi.login(email, password);
+      if (res.success && res.data) {
+        this.setCurrentUser(res.data);
+        return { success: true, user: res.data };
+      }
+    }
+    return this.login(email, password);
+  },
   login(email, password) {
     const users = this.getUsers();
     const u = users.find(x => x.email.toLowerCase() === email.trim().toLowerCase());
     if (!u) return { success: false, message: 'Email không tồn tại trong hệ thống' };
-    if (u.password !== password) return { success: false, message: 'Mật khẩu không chính xác' };
+    if (u.password && u.password !== password) return { success: false, message: 'Mật khẩu không chính xác' };
     if (u.status === 'locked') return { success: false, message: 'Tài khoản đang bị tạm khóa' };
     this.setCurrentUser(u);
     return { success: true, user: u };
+  },
+  async registerAsync(userData) {
+    if (typeof GTApi !== 'undefined') {
+      const res = await GTApi.register(userData);
+      if (res.success && res.data) {
+        this.setCurrentUser(res.data);
+        return { success: true, user: res.data };
+      }
+    }
+    return this.register(userData);
   },
   register(userData) {
     const users = this.getUsers();
@@ -266,12 +342,15 @@ const GTStore = {
   logout() {
     this.setCurrentUser(null);
   },
-  toggleUserStatus(id) {
+  async toggleUserStatus(id) {
     const users = this.getUsers();
     const u = users.find(x => x.id === id);
     if (u) {
       u.status = u.status === 'active' ? 'locked' : 'active';
       localStorage.setItem(this.KEYS.USERS, JSON.stringify(users));
+    }
+    if (typeof GTApi !== 'undefined') {
+      await GTApi.toggleUserStatus(id);
     }
     return u;
   }

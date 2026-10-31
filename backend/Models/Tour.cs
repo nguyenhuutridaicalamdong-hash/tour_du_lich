@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json;
 
 namespace backend.Models
 {
@@ -23,5 +26,23 @@ namespace backend.Models
         public string ImagesJson { get; set; } = "[]";
         public string Overview { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        [NotMapped]
+        public List<string> Images
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(ImagesJson)) return new List<string>();
+                try { return JsonSerializer.Deserialize<List<string>>(ImagesJson) ?? new List<string>(); }
+                catch { return new List<string> { ImagesJson }; }
+            }
+            set
+            {
+                ImagesJson = JsonSerializer.Serialize(value ?? new List<string>());
+            }
+        }
+
+        [NotMapped]
+        public int Reviews => ReviewsCount;
     }
 }

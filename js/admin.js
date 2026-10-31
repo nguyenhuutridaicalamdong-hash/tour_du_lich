@@ -1,10 +1,10 @@
 /* =========================================================
-   GoTravel - Admin Portal Controller
+   GoTravel - Admin Portal Controller (Direct SQL Server & API Sync)
    ========================================================= */
 
 let adminOrderFilter = 'all';
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   GTStore.init();
   // Ensure user is recognized as admin
   const u = GTStore.getCurrentUser();
@@ -15,11 +15,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   document.getElementById('admin-user-name').textContent = u.name || 'Quản trị viên';
 
-  loadDashboardStats();
-  loadAdminTours();
-  loadAdminOrders();
-  loadAdminCustomers();
-  loadAdminCoupons();
+  await loadDashboardStats();
+  await loadAdminTours();
+  await loadAdminOrders();
+  await loadAdminCustomers();
+  await loadAdminCoupons();
 });
 
 function switchAdminSection(secName, btn) {
@@ -45,10 +45,21 @@ function switchAdminSection(secName, btn) {
   document.getElementById('admin-sidebar').classList.remove('show');
 }
 
-function loadDashboardStats() {
-  const orders = GTStore.getOrders();
-  const tours = GTStore.getTours();
-  const users = GTStore.getUsers();
+async function loadDashboardStats() {
+  let orders = GTStore.getOrders();
+  let tours = GTStore.getTours();
+  let users = GTStore.getUsers();
+
+  if (typeof GTApi !== 'undefined') {
+    const [resO, resT, resU] = await Promise.all([
+      GTApi.getOrders(),
+      GTApi.getTours(),
+      GTApi.getUsers()
+    ]);
+    if (resO.success && Array.isArray(resO.data)) orders = resO.data;
+    if (resT.success && Array.isArray(resT.data)) tours = resT.data;
+    if (resU.success && Array.isArray(resU.data)) users = resU.data;
+  }
 
   const totalRev = orders.filter(o => o.status !== 'cancelled').reduce((sum, o) => sum + (o.total || 0), 0);
   document.getElementById('stat-revenue').textContent = GTApp.formatVND(totalRev);
@@ -72,24 +83,35 @@ function loadDashboardStats() {
   `).join('');
 }
 
-function loadAdminTours() {
-  const tours = GTStore.getTours();
+async function loadAdminTours() {
+  let tours = GTStore.getTours();
+  if (typeof GTApi !== 'undefined') {
+    const res = await GTApi.getTours();
+    if (res.success && Array.isArray(res.data)) {
+      tours = res.data;
+      localStorage.setItem(GTStore.KEYS.TOURS, JSON.stringify(tours));
+    }
+  }
+
   const tbody = document.getElementById('admin-tours-tbody');
-  tbody.innerHTML = tours.map(t => `
-    <tr>
-      <td><img src="${(t.images && t.images[0]) || FALLBACK_IMG}" style="width:48px;height:38px;object-fit:cover;border-radius:8px;"></td>
-      <td><strong class="text-navy">${t.name}</strong><br><small class="text-muted">${t.days}N${t.nights}Đ • ${t.departFrom || 'Hà Nội'}</small></td>
-      <td>${t.destination}</td>
-      <td><strong class="text-orange">${GTApp.formatVND(t.price)}</strong></td>
-      <td>${t.seats || 30}</td>
-      <td><span class="badge bg-success-subtle text-success">Đang bán</span></td>
-      <td class="text-end">
-        <a href="tour-detail.html?id=${t.id}" target="_blank" class="btn btn-sm btn-outline-secondary me-1" title="Xem trên web"><i class="bi bi-eye"></i></a>
-        <button class="btn btn-sm btn-outline-gt me-1" onclick="editTour(${t.id})" title="Sửa"><i class="bi bi-pencil"></i></button>
-        <button class="btn btn-sm btn-outline-danger" onclick="deleteTour(${t.id})" title="Xóa"><i class="bi bi-trash"></i></button>
-      </td>
-    </tr>
-  `).join('');
+  tbody.innerHTML = tours.map(t => {
+    const img = (t.images && t.images[0]) || (t.imagesJson ? JSON.parse(t.imagesJson || '[]')[0] : FALLBACK_IMG) || FALLBACK_IMG;
+    return `
+      <tr>
+        <td><img src="${img}" style="width:48px;height:38px;object-fit:cover;border-radius:8px;"></td>
+        <td><strong class="text-navy">${t.name}</strong><br><small class="text-muted">${t.days}N${t.nights}Đ • ${t.departFrom || 'Hà Nội'}</small></td>
+        <td>${t.destination}</td>
+        <td><strong class="text-orange">${GTApp.formatVND(t.price)}</strong></td>
+        <td>${t.seats || 30}</td>
+        <td><span class="badge bg-success-subtle text-success">Đang bán</span></td>
+        <td class="text-end">
+          <a href="tour-detail.html?id=${t.id}" target="_blank" class="btn btn-sm btn-outline-secondary me-1" title="Xem trên web"><i class="bi bi-eye"></i></a>
+          <button class="btn btn-sm btn-outline-gt me-1" onclick="editTour(${t.id})" title="Sửa"><i class="bi bi-pencil"></i></button>
+          <button class="btn btn-sm btn-outline-danger" onclick="deleteTour(${t.id})" title="Xóa"><i class="bi bi-trash"></i></button>
+        </td>
+      </tr>
+    `;
+  }).join('');
 }
 
 function openTourModal(tour = null) {
@@ -105,7 +127,15 @@ function openTourModal(tour = null) {
   document.getElementById('t-depart').value = tour ? tour.departFrom : 'Hà Nội';
   document.getElementById('t-price').value = tour ? tour.price : '';
   document.getElementById('t-oldprice').value = tour ? (tour.oldPrice || '') : '';
-  document.getElementById('t-img').value = (tour && tour.images) ? tour.images[0] : '';
+  
+  let coverImg = '';
+  if (tour) {
+    if (tour.images && tour.images[0]) coverImg = tour.images[0];
+    else if (tour.imagesJson) {
+      try { coverImg = JSON.parse(tour.imagesJson)[0] || ''; } catch {}
+    }
+  }
+  document.getElementById('t-img').value = coverImg;
   document.getElementById('t-overview').value = tour ? (tour.overview || '') : '';
 
   new bootstrap.Modal(document.getElementById('tourModal')).show();
@@ -116,16 +146,19 @@ function editTour(id) {
   if (t) openTourModal(t);
 }
 
-function deleteTour(id) {
+async function deleteTour(id) {
   if (confirm('Bạn có chắc chắn muốn xóa tour này khỏi hệ thống?')) {
-    GTStore.deleteTour(id);
-    loadAdminTours();
-    loadDashboardStats();
-    GTApp.toast('Đã xóa tour thành công!', 'info');
+    if (typeof GTApi !== 'undefined') {
+      await GTApi.deleteTour(id);
+    }
+    await GTStore.deleteTour(id);
+    await loadAdminTours();
+    await loadDashboardStats();
+    GTApp.toast('Đã xóa tour thành công khỏi CSDL SQL Server!', 'info');
   }
 }
 
-function handleSaveTour(e) {
+async function handleSaveTour(e) {
   e.preventDefault();
   const id = document.getElementById('tour-crud-id').value;
   const imgVal = document.getElementById('t-img').value.trim() || FALLBACK_IMG;
@@ -142,15 +175,28 @@ function handleSaveTour(e) {
     price: parseInt(document.getElementById('t-price').value) || 2000000,
     oldPrice: parseInt(document.getElementById('t-oldprice').value) || null,
     images: [imgVal, PHOTOS.beach1, PHOTOS.mountain1],
-    overview: document.getElementById('t-overview').value.trim()
+    overview: document.getElementById('t-overview').value.trim(),
+    status: 'active',
+    featured: true
   };
-  if (id) tourData.id = id;
 
-  GTStore.saveTour(tourData);
+  if (id) {
+    tourData.id = parseInt(id) || id;
+    if (typeof GTApi !== 'undefined') {
+      await GTApi.updateTour(tourData.id, tourData);
+    }
+  } else {
+    if (typeof GTApi !== 'undefined') {
+      const res = await GTApi.createTour(tourData);
+      if (res.success && res.data && res.data.id) tourData.id = res.data.id;
+    }
+  }
+
+  await GTStore.saveTour(tourData);
   bootstrap.Modal.getInstance(document.getElementById('tourModal')).hide();
-  loadAdminTours();
-  loadDashboardStats();
-  GTApp.toast(id ? 'Cập nhật tour thành công!' : 'Thêm tour mới thành công!', 'success');
+  await loadAdminTours();
+  await loadDashboardStats();
+  GTApp.toast(id ? 'Cập nhật tour thành công vào SQL Server!' : 'Thêm tour mới thành công vào SQL Server!', 'success');
 }
 
 function filterAdminOrders(status, btn) {
@@ -160,8 +206,16 @@ function filterAdminOrders(status, btn) {
   loadAdminOrders();
 }
 
-function loadAdminOrders() {
-  const orders = GTStore.getOrders();
+async function loadAdminOrders() {
+  let orders = GTStore.getOrders();
+  if (typeof GTApi !== 'undefined') {
+    const res = await GTApi.getOrders();
+    if (res.success && Array.isArray(res.data)) {
+      orders = res.data;
+      localStorage.setItem(GTStore.KEYS.ORDERS, JSON.stringify(orders));
+    }
+  }
+
   const filtered = orders.filter(o => adminOrderFilter === 'all' || o.status === adminOrderFilter);
   const tbody = document.getElementById('admin-orders-tbody');
 
@@ -175,12 +229,15 @@ function loadAdminOrders() {
 
   tbody.innerHTML = filtered.map(o => {
     const st = statusMap[o.status] || { text: o.status, class: 'st-pending' };
+    const customerName = o.customerName || (o.customer ? o.customer.name : 'Khách');
+    const customerPhone = o.customerPhone || (o.customer ? o.customer.phone : '');
+
     return `
       <tr>
         <td><strong class="font-monospace text-primary">${o.code}</strong></td>
         <td>
-          <strong>${o.customer?.name || 'Khách'}</strong>
-          <small class="text-muted d-block">${o.customer?.phone || ''}</small>
+          <strong>${customerName}</strong>
+          <small class="text-muted d-block">${customerPhone}</small>
         </td>
         <td><span class="text-truncate d-inline-block" style="max-width:180px;">${o.tourName}</span></td>
         <td>${GTApp.formatDateVN(o.createdAt)}</td>
@@ -200,15 +257,26 @@ function loadAdminOrders() {
   }).join('');
 }
 
-function changeOrderStatus(code, newStatus) {
-  GTStore.updateOrderStatus(code, newStatus);
-  loadAdminOrders();
-  loadDashboardStats();
+async function changeOrderStatus(code, newStatus) {
+  if (typeof GTApi !== 'undefined') {
+    await GTApi.updateOrderStatus(code, newStatus);
+  }
+  await GTStore.updateOrderStatus(code, newStatus);
+  await loadAdminOrders();
+  await loadDashboardStats();
   GTApp.toast(`Đã cập nhật đơn hàng ${code} sang ${newStatus}!`, 'success');
 }
 
-function loadAdminCustomers() {
-  const users = GTStore.getUsers();
+async function loadAdminCustomers() {
+  let users = GTStore.getUsers();
+  if (typeof GTApi !== 'undefined') {
+    const res = await GTApi.getUsers();
+    if (res.success && Array.isArray(res.data)) {
+      users = res.data;
+      localStorage.setItem(GTStore.KEYS.USERS, JSON.stringify(users));
+    }
+  }
+
   const tbody = document.getElementById('admin-customers-tbody');
   tbody.innerHTML = users.map(u => `
     <tr>
@@ -233,21 +301,32 @@ function loadAdminCustomers() {
   `).join('');
 }
 
-function toggleCustomerStatus(id) {
-  GTStore.toggleUserStatus(id);
-  loadAdminCustomers();
-  GTApp.toast('Đã cập nhật trạng thái khách hàng!', 'info');
+async function toggleCustomerStatus(id) {
+  if (typeof GTApi !== 'undefined') {
+    await GTApi.toggleUserStatus(id);
+  }
+  await GTStore.toggleUserStatus(id);
+  await loadAdminCustomers();
+  GTApp.toast('Đã cập nhật trạng thái khách hàng trong SQL Server!', 'info');
 }
 
-function loadAdminCoupons() {
-  const coupons = GTStore.getCoupons();
+async function loadAdminCoupons() {
+  let coupons = GTStore.getCoupons();
+  if (typeof GTApi !== 'undefined') {
+    const res = await GTApi.getVouchers();
+    if (res.success && Array.isArray(res.data)) {
+      coupons = res.data;
+      localStorage.setItem(GTStore.KEYS.COUPONS, JSON.stringify(coupons));
+    }
+  }
+
   const tbody = document.getElementById('admin-coupons-tbody');
   tbody.innerHTML = coupons.map(c => `
     <tr>
       <td><span class="coupon-code">${c.code}</span></td>
       <td><strong>${c.type === 'percent' ? `${c.value}%` : GTApp.formatVND(c.value)}</strong></td>
       <td>${c.minOrder ? GTApp.formatVND(c.minOrder) : '0đ'}</td>
-      <td>${c.desc || ''}</td>
+      <td>${c.desc || c.description || ''}</td>
       <td><span class="badge bg-success">Hoạt động</span></td>
       <td class="text-end">
         <button class="btn btn-sm btn-outline-danger" onclick="deleteCoupon('${c.code}')"><i class="bi bi-trash"></i></button>
@@ -260,23 +339,32 @@ function openCouponModal() {
   new bootstrap.Modal(document.getElementById('couponModal')).show();
 }
 
-function handleSaveCoupon(e) {
+async function handleSaveCoupon(e) {
   e.preventDefault();
   const code = document.getElementById('cp-code').value.trim().toUpperCase();
   const type = document.getElementById('cp-type').value;
   const value = parseInt(document.getElementById('cp-value').value);
   const desc = document.getElementById('cp-desc').value.trim();
 
-  GTStore.saveCoupon({ code, type, value, max: 2000000, minOrder: 0, desc, active: true });
+  const voucherData = { code, type, value, maxDiscount: 2000000, minOrder: 0, description: desc, isActive: true };
+
+  if (typeof GTApi !== 'undefined') {
+    await GTApi.createVoucher(voucherData);
+  }
+  await GTStore.saveCoupon(voucherData);
+
   bootstrap.Modal.getInstance(document.getElementById('couponModal')).hide();
-  loadAdminCoupons();
-  GTApp.toast(`Đã tạo mã giảm giá ${code}!`, 'success');
+  await loadAdminCoupons();
+  GTApp.toast(`Đã tạo mã giảm giá ${code} trong SQL Server!`, 'success');
 }
 
-function deleteCoupon(code) {
+async function deleteCoupon(code) {
   if (confirm(`Bạn có chắc muốn xóa mã ${code}?`)) {
-    GTStore.deleteCoupon(code);
-    loadAdminCoupons();
+    if (typeof GTApi !== 'undefined') {
+      await GTApi.deleteVoucher(code);
+    }
+    await GTStore.deleteCoupon(code);
+    await loadAdminCoupons();
     GTApp.toast('Đã xóa mã giảm giá', 'info');
   }
 }
